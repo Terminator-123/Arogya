@@ -21,6 +21,7 @@ import {
   Activity,
   Globe,
   Sun,
+  Moon,
   PhoneCall,
   Menu,
   X,
@@ -34,7 +35,9 @@ type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | '
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
   const [lang, setLang] = useState<Language>('mr');
-  const [sunlightMode, setSunlightMode] = useState<boolean>(false);
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
+    return localStorage.getItem('arogya-theme') === 'dark';
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [showEmergencyModal, setShowEmergencyModal] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<string>('');
@@ -61,12 +64,14 @@ export const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (sunlightMode) {
-      document.body.classList.add('sunlight-theme');
+    if (darkMode) {
+      document.body.classList.add('dark-theme');
+      localStorage.setItem('arogya-theme', 'dark');
     } else {
-      document.body.classList.remove('sunlight-theme');
+      document.body.classList.remove('dark-theme');
+      localStorage.setItem('arogya-theme', 'light');
     }
-  }, [sunlightMode]);
+  }, [darkMode]);
 
   const navItems = [
     { id: 'worker', label: t.tabWorker, icon: Users, badge: null },
@@ -81,7 +86,7 @@ export const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors relative selection:bg-blue-600 selection:text-white ${
-      sunlightMode ? 'bg-amber-100 text-black' : 'bg-slate-100 text-slate-900'
+      darkMode ? 'bg-slate-950 text-slate-100' : 'bg-slate-100 text-slate-900'
     }`}>
       {/* 1. Formal Top Government Ribbon */}
       <div className="bg-slate-950 text-slate-300 text-[11px] px-4 sm:px-6 py-1.5 border-b border-slate-800 flex flex-wrap items-center justify-between font-medium">
@@ -174,18 +179,22 @@ export const App: React.FC = () => {
               </button>
             </div>
 
-            {/* High-Contrast Sunlight Mode Toggle */}
+            {/* Dark / Light Mode Toggle */}
             <button
-              onClick={() => setSunlightMode(!sunlightMode)}
-              title="Toggle High-Contrast Field Sunlight Mode"
+              onClick={() => setDarkMode(!darkMode)}
+              title={darkMode ? t.themeLight : t.themeDark}
               className={`p-2 sm:px-3 sm:py-1.5 rounded-lg border text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
-                sunlightMode
-                  ? 'bg-amber-400 text-black border-black ring-2 ring-black font-black'
+                darkMode
+                  ? 'bg-slate-800 text-amber-300 border-slate-700 hover:bg-slate-700'
                   : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
-              <Sun className={`w-4 h-4 ${sunlightMode ? 'text-black' : 'text-amber-500'}`} />
-              <span className="hidden sm:inline">{sunlightMode ? t.sunlightActive : t.sunlightMode}</span>
+              {darkMode ? (
+                <Sun className="w-4 h-4 text-amber-400" />
+              ) : (
+                <Moon className="w-4 h-4 text-slate-600" />
+              )}
+              <span className="hidden sm:inline">{darkMode ? t.themeLight : t.themeDark}</span>
             </button>
 
             {/* Mobile Menu Button */}

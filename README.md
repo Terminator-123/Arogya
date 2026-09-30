@@ -14,8 +14,8 @@
 2. **Full Multi-Language Localization (English / मराठी / हिंदी)**
    - True deep localization across **ALL pages** (Intake, Doctor Command, Outbreak GIS, QR Passport, Pharmacy, Simulation Lab, AI Chatbot).
 
-3. **Field Sunlight Mode (High-Contrast Anti-Glare)**
-   - High-contrast outdoor mode engineered for frontline ASHA/ANM workers operating under harsh direct sunlight.
+3. **Clinical Dark & Light Mode**
+   - Eye-friendly clinical night mode engineered for tele-physician overnight shifts, low-light hospital wards, and reduced battery consumption on frontline mobile devices.
 
 4. **100% Offline-First PWA & Web Crypto AES-GCM Encryption**
    - Service Workers with complete App Shell precaching via Workbox.

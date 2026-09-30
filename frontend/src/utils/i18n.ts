@@ -7,8 +7,8 @@ export const TRANSLATIONS = {
     appSubtitle: 'National Rural Telemedicine & Distributed Triage Network',
     govHeader: 'Government of Maharashtra • Public Health Department • NHM Portal',
     districtBadge: 'District Surveillance: Palghar Tribal Belt',
-    sunlightActive: 'High-Contrast Active',
-    sunlightMode: 'Sunlight Mode',
+    themeDark: 'Dark Mode',
+    themeLight: 'Light Mode',
 
     // Navigation Tabs
     tabWorker: 'ASHA Field Intake',
@@ -171,8 +171,8 @@ export const TRANSLATIONS = {
     appSubtitle: 'राष्ट्रीय ग्रामीण टेलिमेडिसीन व प्राधान्य ट्रायज प्रणाली',
     govHeader: 'महाराष्ट्र शासन • सार्वजनिक आरोग्य विभाग • राष्ट्रीय आरोग्य अभियान',
     districtBadge: 'जिल्हा नियंत्रण कक्ष: पालघर आदिवासी विभाग',
-    sunlightActive: 'उच्च कॉन्ट्रास्ट सक्रिय',
-    sunlightMode: 'सनलाइट मोड',
+    themeDark: 'डार्क मोड',
+    themeLight: 'लाईट मोड',
 
     // Navigation Tabs
     tabWorker: 'आशा सेविका नोंदणी',
@@ -335,8 +335,8 @@ export const TRANSLATIONS = {
     appSubtitle: 'राष्ट्रीय ग्रामीण टेलीमेडिसिन एवं प्राथमिकता ट्राइएज प्रणाली',
     govHeader: 'महाराष्ट्र शासन • सार्वजनिक स्वास्थ्य विभाग • राष्ट्रीय स्वास्थ्य मिशन',
     districtBadge: 'जिला नियंत्रण: पालघर जनजातीय क्षेत्र',
-    sunlightActive: 'उच्च कंट्रास्ट सक्रिय',
-    sunlightMode: 'सनलाइट मोड',
+    themeDark: 'डार्क मोड',
+    themeLight: 'लाइट मोड',
 
     // Navigation Tabs
     tabWorker: 'आशा पंजीकरण',
