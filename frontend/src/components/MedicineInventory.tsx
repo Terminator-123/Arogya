@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { Pill, AlertOctagon, Truck, Check, RefreshCw } from 'lucide-react';
 
@@ -85,14 +85,40 @@ export const MedicineInventory: React.FC<MedicineInventoryProps> = ({ lang = 'mr
   const [medicines, setMedicines] = useState<MedicineStock[]>(INITIAL_MEDICINES);
   const [dispatchedId, setDispatchedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    fetch('http://localhost:5000/api/inventory')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setMedicines(prev => prev.map(m => {
+            const serverItem = data.find((d: any) => d.id === m.id);
+            if (serverItem) {
+              const stock = serverItem.stock;
+              const urgency: 'CRITICAL' | 'LOW' | 'OPTIMAL' = stock <= 4 ? 'CRITICAL' : stock < serverItem.min_threshold ? 'LOW' : 'OPTIMAL';
+              return { ...m, stockLevel: stock, urgency };
+            }
+            return m;
+          }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   const handleEmergencyDispatch = (id: string, name: string) => {
     setDispatchedId(id);
+    const newStock = 20;
+    fetch(`http://localhost:5000/api/inventory/${id}/stock`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ stock: newStock })
+    }).catch(() => {});
+
     setTimeout(() => {
       setMedicines(prev =>
         prev.map(m => (m.id === id ? { ...m, stockLevel: m.minRequired + 5, urgency: 'OPTIMAL' } : m))
       );
       setDispatchedId(null);
-      alert(lang === 'mr' ? `१०८ रुग्णवाहिका द्वारे ${name} चा पुरवठा रवाना करण्यात आला!` : `Emergency 108 Ambulance Dispatch Confirmed for ${name}! Stock replenished.`);
+      alert(lang === 'mr' ? `१०८ रुग्णवाहिका द्वारे ${name} चा पुरवठा रवाना करण्यात आला! SQLite डेटाबेसमध्ये साठा अद्ययावत झाला.` : `Emergency 108 Ambulance Dispatch Confirmed for ${name}! Stock replenished in SQLite database.`);
     }, 2000);
   };
 

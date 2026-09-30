@@ -17,3 +17,8 @@ npm-debug.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# SQLite Database runtime
+*.db
+*.db-wal
+*.db-shm

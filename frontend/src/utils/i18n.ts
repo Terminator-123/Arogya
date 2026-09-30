@@ -19,6 +19,7 @@ export const TRANSLATIONS = {
     tabPassport: 'Offline QR Health Pass',
     tabPharmacy: 'Drug Stock & 108 Resupply',
     tabSimulation: 'Simulation & Merge Lab',
+    tabDatabase: 'SQLite Database & Audit',
 
     // Network Status
     netOnline: 'Low-Bandwidth Satellite Link (Online)',
@@ -182,6 +183,7 @@ export const TRANSLATIONS = {
     tabPassport: 'ऑफलाइन QR हेल्थ पास',
     tabPharmacy: 'औषध साठा व १०८ पुरवठा',
     tabSimulation: 'सिम्युलेशन व चाचणी लॅब',
+    tabDatabase: 'डेटाबेस व ऑडिट ट्रेल्स',
 
     // Network Status
     netOnline: 'कमी बँडविड्थ नेटवर्क (ऑनलाइन)',
@@ -345,6 +347,7 @@ export const TRANSLATIONS = {
     tabPassport: 'ऑफ़लाइन QR हेल्थ पास',
     tabPharmacy: 'दवा स्टॉक व 108 आपूर्ति',
     tabSimulation: 'सिमुलेशन व परीक्षण लैब',
+    tabDatabase: 'डेटाबेस और ऑडिट ट्रेल्स',
 
     // Network Status
     netOnline: 'कम बैंडविड्थ नेटवर्क (ऑनलाइन)',

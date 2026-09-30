@@ -8,6 +8,7 @@ import { OutbreakMap } from './components/OutbreakMap';
 import { PatientQRPassport } from './components/PatientQRPassport';
 import { MedicineInventory } from './components/MedicineInventory';
 import { SimulationLab } from './components/SimulationLab';
+import { DatabaseExplorer } from './components/DatabaseExplorer';
 import { TRANSLATIONS, type Language } from './utils/i18n';
 import { 
   Users, 
@@ -18,12 +19,13 @@ import {
   QrCode, 
   Pill, 
   Cpu, 
+  Database,
   Activity,
   Globe,
   Sun
 } from 'lucide-react';
 
-type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
+type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation' | 'database';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
@@ -49,6 +51,7 @@ export const App: React.FC = () => {
     { id: 'passport', label: t.tabPassport, icon: QrCode },
     { id: 'pharmacy', label: t.tabPharmacy, icon: Pill },
     { id: 'simulation', label: t.tabSimulation, icon: Cpu },
+    { id: 'database', label: t.tabDatabase, icon: Database },
   ];
 
   return (
@@ -167,6 +170,7 @@ export const App: React.FC = () => {
         {activeTab === 'passport' && <PatientQRPassport lang={lang} />}
         {activeTab === 'pharmacy' && <MedicineInventory lang={lang} />}
         {activeTab === 'simulation' && <SimulationLab lang={lang} />}
+        {activeTab === 'database' && <DatabaseExplorer lang={lang} />}
       </main>
 
       {/* Persistent Floating Quick Action Button (FAB) for AI Chatbot */}
