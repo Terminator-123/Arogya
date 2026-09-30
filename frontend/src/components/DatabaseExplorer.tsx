@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { type Language } from '../utils/i18n';
+import { API_BASE_URL } from '../config/api';
 import {
   Database,
   RefreshCw,
@@ -78,7 +79,7 @@ export const DatabaseExplorer: React.FC<DatabaseExplorerProps> = ({ lang = 'mr' 
     setLoading(true);
     try {
       // 1. Fetch Stats & Audit Logs
-      const resStats = await fetch('http://localhost:5000/api/db/stats');
+      const resStats = await fetch(`${API_BASE_URL}/api/db/stats`);
       if (resStats.ok) {
         const data = await resStats.json();
         setStats(data.stats);
@@ -86,14 +87,14 @@ export const DatabaseExplorer: React.FC<DatabaseExplorerProps> = ({ lang = 'mr' 
       }
 
       // 2. Fetch Patients Table
-      const resPatients = await fetch('http://localhost:5000/api/referrals');
+      const resPatients = await fetch(`${API_BASE_URL}/api/referrals`);
       if (resPatients.ok) {
         const pData = await resPatients.json();
         setPatients(pData || []);
       }
 
       // 3. Fetch Pharmacy Inventory Table
-      const resInv = await fetch('http://localhost:5000/api/inventory');
+      const resInv = await fetch(`${API_BASE_URL}/api/inventory`);
       if (resInv.ok) {
         const iData = await resInv.json();
         setInventory(iData || []);
@@ -111,7 +112,7 @@ export const DatabaseExplorer: React.FC<DatabaseExplorerProps> = ({ lang = 'mr' 
 
   const handleReplenishStock = async (id: string, currentStock: number) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/inventory/${id}/stock`, {
+      const res = await fetch(`${API_BASE_URL}/api/inventory/${id}/stock`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stock: currentStock + 10 })
@@ -146,7 +147,7 @@ export const DatabaseExplorer: React.FC<DatabaseExplorerProps> = ({ lang = 'mr' 
         version: 1
       };
 
-      const res = await fetch('http://localhost:5000/api/sync-record', {
+      const res = await fetch(`${API_BASE_URL}/api/sync-record`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newRec)

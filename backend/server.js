@@ -236,7 +236,7 @@ app.post('/api/ai/chat', async (req, res) => {
   return res.json({ reply: botReply });
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`🏥 Arogya Backend with SQLite running on http://localhost:${PORT}`);
+  console.log(`🏥 Arogya Backend with SQLite running on port ${PORT}`);
 });

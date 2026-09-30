@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { decryptField } from '../utils/crypto';
 import { playHospitalChime } from '../utils/audioAlert';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
+import { API_BASE_URL } from '../config/api';
 import { Stethoscope, Sparkles, Send, RefreshCw, AlertCircle, FileText, Truck, Phone, Printer, X } from 'lucide-react';
 
 interface ServerPatient {
@@ -49,7 +50,7 @@ export const DoctorPortal: React.FC<DoctorPortalProps> = ({ lang = 'mr' }) => {
   const fetchReferrals = async () => {
     setRefreshing(true);
     try {
-      const res = await fetch('http://localhost:5000/api/referrals');
+      const res = await fetch(`${API_BASE_URL}/api/referrals`);
       if (res.ok) {
         const data: ServerPatient[] = await res.json();
         setPatients(data);
@@ -86,7 +87,7 @@ export const DoctorPortal: React.FC<DoctorPortalProps> = ({ lang = 'mr' }) => {
     setLoadingAi(true);
     setAiSummary('');
     try {
-      const res = await fetch('http://localhost:5000/api/ai/referral-analysis', {
+      const res = await fetch(`${API_BASE_URL}/api/ai/referral-analysis`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -109,7 +110,7 @@ export const DoctorPortal: React.FC<DoctorPortalProps> = ({ lang = 'mr' }) => {
   const submitPrescription = async () => {
     if (!selectedPatient) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/patient/${selectedPatient.id}/prescribe`, {
+      const res = await fetch(`${API_BASE_URL}/api/patient/${selectedPatient.id}/prescribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prescription })

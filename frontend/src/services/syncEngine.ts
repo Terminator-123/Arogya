@@ -1,6 +1,7 @@
 import { db } from '../db/db';
+import { API_BASE_URL } from '../config/api';
 
-const API_SERVER = 'http://localhost:5000/api';
+const API_SERVER = `${API_BASE_URL}/api`;
 
 export class SyncEngine {
   private static isSyncing = false;

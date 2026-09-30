@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
+import { API_BASE_URL } from '../config/api';
 import { Pill, AlertOctagon, Truck, Check, RefreshCw } from 'lucide-react';
 
 interface MedicineStock {
@@ -86,7 +87,7 @@ export const MedicineInventory: React.FC<MedicineInventoryProps> = ({ lang = 'mr
   const [dispatchedId, setDispatchedId] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/inventory')
+    fetch(`${API_BASE_URL}/api/inventory`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
@@ -107,7 +108,7 @@ export const MedicineInventory: React.FC<MedicineInventoryProps> = ({ lang = 'mr
   const handleEmergencyDispatch = (id: string, name: string) => {
     setDispatchedId(id);
     const newStock = 20;
-    fetch(`http://localhost:5000/api/inventory/${id}/stock`, {
+    fetch(`${API_BASE_URL}/api/inventory/${id}/stock`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ stock: newStock })

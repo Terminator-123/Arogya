@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { playHospitalChime } from '../utils/audioAlert';
+import { API_BASE_URL } from '../config/api';
 import { Bot, User, Send, Sparkles, HelpCircle, ShieldAlert, RefreshCw } from 'lucide-react';
 
 interface ChatMessage {
@@ -54,7 +55,7 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ lang = 'mr' }) => {
     setIsTyping(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/ai/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: query, lang })

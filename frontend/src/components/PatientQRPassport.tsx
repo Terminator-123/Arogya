@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { db, type LocalPatient } from '../db/db';
 import { decryptField } from '../utils/crypto';
+import { API_BASE_URL } from '../config/api';
 import { 
   QrCode, 
   Shield, 
@@ -159,7 +160,7 @@ export const PatientQRPassport: React.FC<PatientQRPassportProps> = ({ lang = 'mr
 
       // 2. Also try fetching from SQLite server (if online)
       try {
-        const res = await fetch('http://localhost:5000/api/referrals');
+        const res = await fetch(`${API_BASE_URL}/api/referrals`);
         if (res.ok) {
           const serverRecords = await res.json();
           for (const sRec of serverRecords) {
