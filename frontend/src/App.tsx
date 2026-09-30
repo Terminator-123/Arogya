@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NetworkBadge } from './components/NetworkBadge';
 import { WorkerPortal } from './components/WorkerPortal';
 import { DoctorPortal } from './components/DoctorPortal';
@@ -23,71 +23,88 @@ type TabView = 'worker' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulati
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
-  const [lang, setLang] = useState<Language>('mr'); // Default to Marathi for Maharashtra judges!
+  const [lang, setLang] = useState<Language>('mr');
   const [sunlightMode, setSunlightMode] = useState<boolean>(false);
 
-  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.mr;
+
+  // Real Sunlight Mode: attaches high-contrast class to document body
+  useEffect(() => {
+    if (sunlightMode) {
+      document.body.classList.add('sunlight-theme');
+    } else {
+      document.body.classList.remove('sunlight-theme');
+    }
+  }, [sunlightMode]);
 
   const navItems = [
-    { id: 'worker', label: lang === 'mr' ? 'आशा सेविका नोंदणी' : lang === 'hi' ? 'आशा पंजीकरण' : 'ASHA Field Intake', icon: Users, badge: 'Offline' },
-    { id: 'doctor', label: lang === 'mr' ? 'डॉक्टर कमांड सेंटर' : lang === 'hi' ? 'डॉक्टर कमांड' : 'Doctor Command Center', icon: Stethoscope, badge: 'Live Queue' },
-    { id: 'map', label: lang === 'mr' ? 'गाव साथरोग नकाशा' : lang === 'hi' ? 'प्रकोप मानचित्र' : 'Village Outbreak GIS', icon: MapPin, badge: 'Hotspots' },
-    { id: 'passport', label: lang === 'mr' ? 'ऑफलाइन QR कार्ड' : lang === 'hi' ? 'QR हेल्थ पास' : 'Offline QR Health Pass', icon: QrCode, badge: 'Scan & Go' },
-    { id: 'pharmacy', label: lang === 'mr' ? 'औषध साठा' : lang === 'hi' ? 'दवा स्टॉक' : 'Medicine Stock', icon: Pill, badge: '108 Dispatch' },
-    { id: 'simulation', label: 'Simulation Lab', icon: Cpu, badge: 'Judge Demo' },
+    { id: 'worker', label: t.tabWorker, icon: Users },
+    { id: 'doctor', label: t.tabDoctor, icon: Stethoscope },
+    { id: 'map', label: t.tabMap, icon: MapPin },
+    { id: 'passport', label: t.tabPassport, icon: QrCode },
+    { id: 'pharmacy', label: t.tabPharmacy, icon: Pill },
+    { id: 'simulation', label: t.tabSimulation, icon: Cpu },
   ];
 
   return (
     <div className={`min-h-screen flex flex-col font-sans transition-colors ${
-      sunlightMode ? 'bg-amber-50/40 text-black contrast-125' : 'bg-slate-50 text-slate-900'
+      sunlightMode ? 'bg-amber-100 text-black' : 'bg-slate-100 text-slate-900'
     }`}>
-      {/* Top Real-Time Connection Bar */}
-      <NetworkBadge />
+      {/* Formal Top Government Ribbon */}
+      <div className="bg-slate-950 text-slate-300 text-[11px] px-4 sm:px-6 py-1 border-b border-slate-800 flex flex-wrap items-center justify-between font-medium">
+        <span>{t.govHeader}</span>
+        <span className="hidden sm:inline text-slate-400 font-mono">{t.districtBadge}</span>
+      </div>
 
-      {/* Main Header */}
-      <header className="bg-green-800 text-white shadow-md border-b border-green-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg bg-white/10 flex items-center justify-center border border-white/20">
-              <Activity className="w-5 h-5 text-amber-300" />
+      {/* Real-time Connection Bar with language support */}
+      <NetworkBadge lang={lang} />
+
+      {/* Main Formal Header */}
+      <header className="bg-white border-b border-slate-300 shadow-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-xs">
+              <Activity className="w-6 h-6 text-emerald-400" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
-                <span>{t.appTitle}</span>
-                <span className="text-[10px] font-bold uppercase bg-amber-400 text-slate-950 px-2 py-0.5 rounded tracking-wide">
-                  Enterprise Rural Telemed
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl font-black tracking-tight text-slate-900 uppercase">
+                  {t.appTitle}
+                </h1>
+                <span className="text-[10px] font-black uppercase bg-slate-900 text-emerald-400 px-2 py-0.5 rounded tracking-wider">
+                  TELEMED v2.4
                 </span>
-              </h1>
-              <p className="text-xs text-green-100">
+              </div>
+              <p className="text-xs text-slate-600 font-medium">
                 {t.appSubtitle}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {/* Regional Language Switcher */}
-            <div className="flex items-center bg-green-900/90 rounded-lg p-1 border border-green-700 text-xs">
-              <Globe className="w-3.5 h-3.5 text-green-300 ml-1.5 mr-1" />
+            <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-300 text-xs shadow-xs">
+              <Globe className="w-3.5 h-3.5 text-slate-600 ml-1.5 mr-1" />
               <button
                 onClick={() => setLang('en')}
-                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
-                  lang === 'en' ? 'bg-white text-green-900 shadow-xs' : 'text-green-200 hover:text-white'
+                className={`px-2.5 py-1 rounded-md font-bold cursor-pointer transition ${
+                  lang === 'en' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-700 hover:text-black'
                 }`}
               >
-                EN
+                English
               </button>
               <button
                 onClick={() => setLang('mr')}
-                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
-                  lang === 'mr' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-green-200 hover:text-white'
+                className={`px-2.5 py-1 rounded-md font-bold cursor-pointer transition ${
+                  lang === 'mr' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-700 hover:text-black'
                 }`}
               >
                 मराठी
               </button>
               <button
                 onClick={() => setLang('hi')}
-                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
-                  lang === 'hi' ? 'bg-white text-green-900 shadow-xs' : 'text-green-200 hover:text-white'
+                className={`px-2.5 py-1 rounded-md font-bold cursor-pointer transition ${
+                  lang === 'hi' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-700 hover:text-black'
                 }`}
               >
                 हिंदी
@@ -98,21 +115,21 @@ export const App: React.FC = () => {
             <button
               onClick={() => setSunlightMode(!sunlightMode)}
               title="Toggle High-Contrast Field Sunlight Mode"
-              className={`p-2 rounded-lg border text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+              className={`px-3 py-1.5 rounded-lg border text-xs font-bold transition cursor-pointer flex items-center gap-1.5 shadow-xs ${
                 sunlightMode
-                  ? 'bg-amber-300 text-slate-950 border-amber-400 shadow-sm'
-                  : 'bg-green-900/60 text-green-200 border-green-700 hover:text-white'
+                  ? 'bg-amber-400 text-black border-black ring-2 ring-black font-black'
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-50'
               }`}
             >
-              <Sun className="w-4 h-4" />
-              <span className="hidden sm:inline">{sunlightMode ? 'Sunlight Active' : 'Sunlight Mode'}</span>
+              <Sun className={`w-4 h-4 ${sunlightMode ? 'text-black' : 'text-amber-500'}`} />
+              <span>{sunlightMode ? t.sunlightActive : t.sunlightMode}</span>
             </button>
           </div>
         </div>
 
-        {/* Multi-Page Navigation Bar */}
-        <div className="bg-green-900/80 border-t border-green-700/60 px-4 sm:px-6">
-          <nav className="max-w-7xl mx-auto flex space-x-1 overflow-x-auto py-2 scrollbar-none">
+        {/* Formal Tabbed Navigation */}
+        <div className="border-t border-slate-200 bg-slate-50 px-4 sm:px-6">
+          <nav className="max-w-7xl mx-auto flex space-x-2 overflow-x-auto py-2 scrollbar-none">
             {navItems.map(item => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -120,21 +137,14 @@ export const App: React.FC = () => {
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id as TabView)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer ${
+                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap cursor-pointer border ${
                     isActive
-                      ? 'bg-white text-green-900 shadow-md ring-1 ring-white/50'
-                      : 'text-green-100 hover:bg-white/10 hover:text-white'
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                      : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100 hover:text-slate-900'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-green-700' : 'text-green-300'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
                   <span>{item.label}</span>
-                  <span className={`text-[9px] px-1.5 py-0.2 rounded font-extrabold ${
-                    isActive
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-black/20 text-green-200'
-                  }`}>
-                    {item.badge}
-                  </span>
                 </button>
               );
             })}
@@ -142,14 +152,14 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Page Body */}
-      <main className="flex-1">
+      {/* Main Page Body with lang passed to every page */}
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
         {activeTab === 'worker' && <WorkerPortal lang={lang} />}
-        {activeTab === 'doctor' && <DoctorPortal />}
-        {activeTab === 'map' && <OutbreakMap />}
-        {activeTab === 'passport' && <PatientQRPassport />}
-        {activeTab === 'pharmacy' && <MedicineInventory />}
-        {activeTab === 'simulation' && <SimulationLab />}
+        {activeTab === 'doctor' && <DoctorPortal lang={lang} />}
+        {activeTab === 'map' && <OutbreakMap lang={lang} />}
+        {activeTab === 'passport' && <PatientQRPassport lang={lang} />}
+        {activeTab === 'pharmacy' && <MedicineInventory lang={lang} />}
+        {activeTab === 'simulation' && <SimulationLab lang={lang} />}
       </main>
     </div>
   );

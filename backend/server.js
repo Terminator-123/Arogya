@@ -161,5 +161,5 @@ app.post('/api/ai/referral-analysis', async (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, () => {
-  console.log(`Sanjeevani Backend running on http://localhost:${PORT}`);
+  console.log(`Arogya Backend running on http://localhost:${PORT}`);
 });

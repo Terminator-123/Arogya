@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { MapPin, AlertTriangle, Activity, ShieldAlert, ChevronRight } from 'lucide-react';
 
 interface VillageCluster {
@@ -80,7 +81,12 @@ const VILLAGES: VillageCluster[] = [
   }
 ];
 
-export const OutbreakMap: React.FC = () => {
+interface OutbreakMapProps {
+  lang?: Language;
+}
+
+export const OutbreakMap: React.FC<OutbreakMapProps> = ({ lang = 'mr' }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.mr;
   const [selectedVillage, setSelectedVillage] = useState<VillageCluster>(VILLAGES[0]);
   const [filterLevel, setFilterLevel] = useState<'ALL' | 'CRITICAL'>('ALL');
 
@@ -92,54 +98,55 @@ export const OutbreakMap: React.FC = () => {
   const totalRed = VILLAGES.reduce((acc, v) => acc + v.redCases, 0);
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-6 pb-12 font-sans">
-      {/* Header Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+    <div className="max-w-6xl mx-auto p-4 space-y-5 pb-12 font-sans">
+      {/* Formal Banner */}
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-xl border border-slate-300 shadow-xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <MapPin className="w-6 h-6 text-green-600" /> Rural Village Outbreak & Epidemiology GIS
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+            <MapPin className="w-6 h-6 text-slate-800" /> {t.mapTitle}
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Aggregates offline-synced triage data across Palghar tribal district sub-centers to spot disease clusters.
-          </p>
+          <p className="text-xs text-slate-600 mt-0.5">{t.mapDesc}</p>
         </div>
 
-        {/* Global Acuity Ticker */}
         <div className="flex items-center gap-3">
           <div className="bg-red-50 border border-red-200 px-3 py-1.5 rounded-lg text-center">
-            <span className="block text-[10px] font-bold text-red-600 uppercase">Emergency Code Red</span>
-            <span className="text-lg font-black text-red-700">{totalRed} Patients</span>
+            <span className="block text-[10px] font-bold text-red-700 uppercase">{t.criticalAlerts}</span>
+            <span className="text-lg font-black text-red-800">{totalRed}</span>
           </div>
-          <div className="bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-lg text-center">
-            <span className="block text-[10px] font-bold text-slate-600 uppercase">Total Field Cases</span>
-            <span className="text-lg font-black text-slate-800">{totalCases} Active</span>
+          <div className="bg-slate-100 border border-slate-300 px-3 py-1.5 rounded-lg text-center">
+            <span className="block text-[10px] font-bold text-slate-700 uppercase">{t.totalCases}</span>
+            <span className="text-lg font-black text-slate-900">{totalCases}</span>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Interactive Sub-Center Map / Grid */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* Left: Village Grid */}
+        <div className="lg:col-span-2 space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
-              <Activity className="w-4 h-4 text-green-600" /> Sub-Center Surveillance Feed
+            <h3 className="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1.5">
+              <Activity className="w-4 h-4 text-slate-700" /> {t.subCenterFeed}
             </h3>
             <div className="flex gap-1.5 text-xs">
               <button
                 onClick={() => setFilterLevel('ALL')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer ${
-                  filterLevel === 'ALL' ? 'bg-green-700 text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                className={`px-2.5 py-1 rounded-md font-bold transition cursor-pointer border ${
+                  filterLevel === 'ALL' 
+                    ? 'bg-slate-900 text-white border-slate-900' 
+                    : 'bg-white text-slate-700 border-slate-300 hover:bg-slate-100'
                 }`}
               >
-                All Villages ({VILLAGES.length})
+                {t.filterAll} ({VILLAGES.length})
               </button>
               <button
                 onClick={() => setFilterLevel('CRITICAL')}
-                className={`px-2.5 py-1 rounded-md font-semibold transition cursor-pointer flex items-center gap-1 ${
-                  filterLevel === 'CRITICAL' ? 'bg-red-600 text-white shadow-sm' : 'bg-red-50 text-red-700 hover:bg-red-100'
+                className={`px-2.5 py-1 rounded-md font-bold transition cursor-pointer border flex items-center gap-1 ${
+                  filterLevel === 'CRITICAL' 
+                    ? 'bg-red-700 text-white border-red-700' 
+                    : 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100'
                 }`}
               >
-                <AlertTriangle className="w-3.5 h-3.5" /> High Risk Only
+                <AlertTriangle className="w-3.5 h-3.5" /> {t.filterHigh}
               </button>
             </div>
           </div>
@@ -151,40 +158,39 @@ export const OutbreakMap: React.FC = () => {
                 onClick={() => setSelectedVillage(village)}
                 className={`p-4 rounded-xl border transition-all cursor-pointer bg-white relative overflow-hidden ${
                   selectedVillage.id === village.id
-                    ? 'ring-2 ring-green-600 border-green-600 shadow-md'
-                    : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
+                    ? 'ring-2 ring-slate-900 border-slate-900 shadow-md'
+                    : 'border-slate-300 hover:border-slate-400 hover:shadow-xs'
                 }`}
               >
                 {village.outbreakAlert && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-bl">
-                    OUTBREAK RISK
+                  <div className="absolute top-0 right-0 bg-red-700 text-white text-[9px] font-black px-2 py-0.5 rounded-bl tracking-wider">
+                    {t.outbreakRisk}
                   </div>
                 )}
 
                 <div className="flex items-start justify-between">
                   <div>
                     <h4 className="font-bold text-sm text-slate-900">{village.name}</h4>
-                    <span className="text-xs text-slate-500">Taluka: {village.taluka}</span>
+                    <span className="text-xs text-slate-500 font-medium">Taluka: {village.taluka}</span>
                   </div>
                 </div>
 
-                {/* Patient Severity Bar */}
                 <div className="mt-3">
-                  <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-slate-600">Active: <strong>{village.activeCases}</strong></span>
-                    <span className="text-red-600 font-bold">{village.redCases} Critical</span>
+                  <div className="flex justify-between text-[11px] mb-1 font-medium">
+                    <span className="text-slate-600">{t.activeLabel}: <strong>{village.activeCases}</strong></span>
+                    <span className="text-red-700 font-bold">{village.redCases} Critical</span>
                   </div>
-                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden flex">
-                    <div style={{ width: `${(village.redCases / village.activeCases) * 100}%` }} className="bg-red-500 h-full" />
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden flex border border-slate-200">
+                    <div style={{ width: `${(village.redCases / village.activeCases) * 100}%` }} className="bg-red-600 h-full" />
                     <div style={{ width: `${(village.yellowCases / village.activeCases) * 100}%` }} className="bg-amber-400 h-full" />
-                    <div style={{ width: `${(village.greenCases / village.activeCases) * 100}%` }} className="bg-green-500 h-full" />
+                    <div style={{ width: `${(village.greenCases / village.activeCases) * 100}%` }} className="bg-emerald-600 h-full" />
                   </div>
                 </div>
 
-                <div className="mt-2.5 text-[11px] text-slate-500 flex items-center justify-between border-t pt-2">
-                  <span className="truncate max-w-[170px]">Dominant: <strong>{village.topSymptom}</strong></span>
-                  <span className="text-green-700 font-medium flex items-center">
-                    Inspect <ChevronRight className="w-3.5 h-3.5" />
+                <div className="mt-2.5 text-[11px] text-slate-600 flex items-center justify-between border-t pt-2">
+                  <span className="truncate max-w-[170px]">Symptoms: <strong>{village.topSymptom}</strong></span>
+                  <span className="text-slate-900 font-bold flex items-center gap-0.5">
+                    {t.inspectVillage} <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </div>
@@ -192,60 +198,56 @@ export const OutbreakMap: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Detailed Village Outbreak Deep Dive */}
+        {/* Right: Village Surveillance Deep-Dive */}
         <div className="space-y-4">
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4 sticky top-4">
+          <div className="bg-white p-5 rounded-xl border border-slate-300 shadow-sm space-y-4 sticky top-4">
             <div className="border-b pb-3">
-              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+              <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                 {selectedVillage.id}
               </span>
               <h3 className="text-base font-bold text-slate-900 mt-1">{selectedVillage.name}</h3>
-              <p className="text-xs text-slate-500">District: Palghar • Primary Care Cluster</p>
+              <p className="text-xs text-slate-500 font-medium">Public Health Department • Palghar Division</p>
             </div>
 
             {selectedVillage.outbreakAlert ? (
               <div className="bg-red-50 border border-red-200 text-red-900 p-3 rounded-lg text-xs space-y-1">
-                <div className="font-bold flex items-center gap-1.5 text-red-700">
-                  <ShieldAlert className="w-4 h-4 text-red-600" /> Epidemiological Anomaly Flagged
+                <div className="font-bold flex items-center gap-1.5 text-red-800">
+                  <ShieldAlert className="w-4 h-4 text-red-700" /> Epidemiological Anomaly Flagged
                 </div>
-                <p className="text-red-800 leading-relaxed">{selectedVillage.outbreakAlert}</p>
-                <div className="pt-1 text-[11px] text-red-600 font-semibold">
-                  Action: Automated notification sent to District Surveillance Officer (IDSP).
-                </div>
+                <p className="text-red-950 leading-relaxed font-medium">{selectedVillage.outbreakAlert}</p>
               </div>
             ) : (
-              <div className="bg-emerald-50 border border-emerald-200 text-emerald-900 p-3 rounded-lg text-xs">
-                <div className="font-bold text-emerald-800">Normal Epidemiological Baseline</div>
-                <p className="text-emerald-700 mt-0.5">No acute localized transmission spikes detected.</p>
+              <div className="bg-emerald-50 border border-emerald-200 text-emerald-950 p-3 rounded-lg text-xs">
+                <div className="font-bold text-emerald-900">Normal Epidemiological Baseline</div>
+                <p className="text-emerald-800 mt-0.5">No localized pathogen clustering detected in last 72 hours.</p>
               </div>
             )}
 
-            {/* Quick Metrics */}
             <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="bg-red-50 p-2 rounded-lg border border-red-100">
-                <span className="block text-red-600 text-[10px] font-bold">Code Red</span>
-                <span className="text-base font-extrabold text-red-700">{selectedVillage.redCases}</span>
+              <div className="bg-red-50 p-2 rounded-lg border border-red-200">
+                <span className="block text-red-700 text-[10px] font-bold">Code Red</span>
+                <span className="text-base font-black text-red-800">{selectedVillage.redCases}</span>
               </div>
-              <div className="bg-amber-50 p-2 rounded-lg border border-amber-100">
-                <span className="block text-amber-600 text-[10px] font-bold">Code Yellow</span>
-                <span className="text-base font-extrabold text-amber-700">{selectedVillage.yellowCases}</span>
+              <div className="bg-amber-50 p-2 rounded-lg border border-amber-200">
+                <span className="block text-amber-800 text-[10px] font-bold">Code Yellow</span>
+                <span className="text-base font-black text-amber-900">{selectedVillage.yellowCases}</span>
               </div>
-              <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
-                <span className="block text-emerald-600 text-[10px] font-bold">Code Green</span>
-                <span className="text-base font-extrabold text-emerald-700">{selectedVillage.greenCases}</span>
+              <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-200">
+                <span className="block text-emerald-800 text-[10px] font-bold">Code Green</span>
+                <span className="text-base font-black text-emerald-900">{selectedVillage.greenCases}</span>
               </div>
             </div>
 
-            <div className="text-xs space-y-2 border-t pt-3 text-slate-600">
+            <div className="text-xs space-y-2 border-t pt-3 text-slate-700">
               <div>
-                <span className="text-slate-400 block">108 Emergency Ambulance Transit Time:</span>
-                <strong className="text-slate-800">{selectedVillage.ambulanceEta}</strong>
+                <span className="text-slate-500 block">{t.transitTime}:</span>
+                <strong className="text-slate-900 font-bold">{selectedVillage.ambulanceEta}</strong>
               </div>
               <div>
-                <span className="text-slate-400 block">Assigned Frontline ASHA Workers:</span>
+                <span className="text-slate-500 block">{t.assignedWorkers}:</span>
                 <div className="flex flex-wrap gap-1 mt-1">
                   {selectedVillage.ashaWorkers.map((w, idx) => (
-                    <span key={idx} className="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px]">
+                    <span key={idx} className="bg-slate-100 text-slate-800 px-2 py-0.5 rounded text-[11px] font-medium border border-slate-200">
                       {w}
                     </span>
                   ))}
@@ -254,10 +256,10 @@ export const OutbreakMap: React.FC = () => {
             </div>
 
             <button
-              onClick={() => alert(`Emergency Tele-Alert broadcast to ${selectedVillage.name} ASHA team!`)}
-              className="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-lg text-xs transition cursor-pointer shadow-sm"
+              onClick={() => alert(`Direct protocol broadcast sent to ${selectedVillage.name} ASHA team!`)}
+              className="w-full bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-lg text-xs transition cursor-pointer shadow-xs"
             >
-              Broadcast Protocol to Village ASHA Team
+              {t.broadcastAlert}
             </button>
           </div>
         </div>

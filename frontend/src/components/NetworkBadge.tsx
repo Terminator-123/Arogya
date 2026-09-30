@@ -1,8 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Wifi, WifiOff, RefreshCw, Database } from 'lucide-react';
 import { SyncEngine } from '../services/syncEngine';
+import { TRANSLATIONS, type Language } from '../utils/i18n';
 
-export const NetworkBadge: React.FC = () => {
+interface NetworkBadgeProps {
+  lang?: Language;
+}
+
+export const NetworkBadge: React.FC<NetworkBadgeProps> = ({ lang = 'mr' }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.mr;
   const [online, setOnline] = useState(navigator.onLine);
   const [syncing, setSyncing] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
@@ -40,33 +46,33 @@ export const NetworkBadge: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 bg-white px-4 py-2 border-b border-slate-200 shadow-sm text-xs sm:text-sm">
+    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-900 text-slate-200 px-4 sm:px-6 py-2 border-b border-slate-800 text-xs shadow-inner">
       <div className="flex items-center gap-2 font-medium">
         {online ? (
-          <span className="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-            <Wifi className="w-4 h-4 text-emerald-600 animate-pulse" /> Low-Bandwidth Mode (Online)
+          <span className="inline-flex items-center gap-1.5 text-emerald-400 bg-emerald-950/80 px-2.5 py-1 rounded-full border border-emerald-800 font-semibold">
+            <Wifi className="w-3.5 h-3.5 text-emerald-400 animate-pulse" /> {t.netOnline}
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1.5 text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-300">
-            <WifiOff className="w-4 h-4 text-amber-600" /> Offline Mode (IndexedDB Active)
+          <span className="inline-flex items-center gap-1.5 text-amber-300 bg-amber-950/80 px-2.5 py-1 rounded-full border border-amber-700 font-bold">
+            <WifiOff className="w-3.5 h-3.5 text-amber-400" /> {t.netOffline}
           </span>
         )}
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5 text-slate-600">
-          <Database className="w-4 h-4 text-slate-500" />
-          <span>Outbox Queue: <strong className="text-slate-800">{pendingCount}</strong></span>
+        <div className="flex items-center gap-1.5 text-slate-300">
+          <Database className="w-3.5 h-3.5 text-slate-400" />
+          <span>{t.outboxQueue}: <strong className="text-white font-mono bg-slate-800 px-2 py-0.5 rounded">{pendingCount}</strong></span>
         </div>
 
         {online && (
           <button
             onClick={() => SyncEngine.triggerSync((s, c) => { setSyncing(s); setPendingCount(c); })}
             disabled={syncing}
-            className="inline-flex items-center gap-1 text-xs bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded border border-slate-300 transition text-slate-700 font-semibold cursor-pointer"
+            className="inline-flex items-center gap-1 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded border border-slate-700 transition font-bold cursor-pointer"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin text-green-600' : ''}`} />
-            {syncing ? 'Syncing...' : 'Sync Now'}
+            <RefreshCw className={`w-3 h-3 ${syncing ? 'animate-spin text-emerald-400' : ''}`} />
+            {syncing ? t.syncing : t.syncNow}
           </button>
         )}
       </div>

@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+/* High-Contrast Sunlight Mode for outdoor field use under harsh sun */
+body.sunlight-theme {
+  filter: contrast(160%) brightness(105%) saturate(120%);
+  background-color: #fffbeb !important;
+  color: #000000 !important;
+}
+
+body.sunlight-theme * {
+  border-color: #000000 !important;
+  font-weight: 600;
+}
+
+body.sunlight-theme input, 
+body.sunlight-theme select, 
+body.sunlight-theme textarea {
+  border-width: 2px !important;
+  border-color: #000000 !important;
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+body.sunlight-theme button {
+  border-width: 2px !important;
+  border-color: #000000 !important;
+}

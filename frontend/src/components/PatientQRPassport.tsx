@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { QrCode, Shield, Download, Printer, CheckCircle, Smartphone } from 'lucide-react';
 
 interface MockPassportPatient {
@@ -28,7 +29,7 @@ const SAMPLE_PATIENTS: MockPassportPatient[] = [
     age: 48,
     gender: 'Female',
     bloodGroup: 'B+ Positive',
-    village: 'Manor (Palghar)',
+    village: 'Manor Sub-Center (Palghar)',
     abhaId: '91-4829-1029-4412',
     allergies: ['Penicillin', 'Sulfa drugs'],
     chronicConditions: ['Hypertension (Stage 2)', 'Type 2 Diabetes'],
@@ -66,11 +67,16 @@ const SAMPLE_PATIENTS: MockPassportPatient[] = [
   }
 ];
 
-export const PatientQRPassport: React.FC = () => {
+interface PatientQRPassportProps {
+  lang?: Language;
+}
+
+export const PatientQRPassport: React.FC<PatientQRPassportProps> = ({ lang = 'mr' }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.mr;
   const [selectedPatient, setSelectedPatient] = useState<MockPassportPatient>(SAMPLE_PATIENTS[0]);
 
-  // Payload encoded inside the offline QR code (compressed JSON)
   const qrData = JSON.stringify({
+    system: 'AROGYA-TELEMED-VERIFIED',
     abha: selectedPatient.abhaId,
     name: selectedPatient.name,
     age: selectedPatient.age,
@@ -83,27 +89,24 @@ export const PatientQRPassport: React.FC = () => {
   });
 
   return (
-    <div className="max-w-5xl mx-auto p-4 space-y-6 pb-12 font-sans">
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+    <div className="max-w-5xl mx-auto p-4 space-y-5 pb-12 font-sans">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-xl border border-slate-300 shadow-xs">
         <div>
-          <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <QrCode className="w-6 h-6 text-green-600" /> Offline Patient QR Health Passport
+          <h2 className="text-lg sm:text-xl font-black text-slate-900 flex items-center gap-2">
+            <QrCode className="w-6 h-6 text-slate-800" /> {t.passportTitle}
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Patients carry their encrypted medical history on a physical QR card or basic smartphone — readable by any clinic with ZERO internet.
-          </p>
+          <p className="text-xs text-slate-600 mt-0.5">{t.passportDesc}</p>
         </div>
 
-        {/* Patient Switcher */}
         <div className="flex items-center gap-2 text-xs">
-          <span className="text-slate-500 font-semibold">Select Patient:</span>
+          <span className="text-slate-600 font-bold">{t.selectPatient}:</span>
           <select
             value={selectedPatient.id}
             onChange={e => {
               const p = SAMPLE_PATIENTS.find(item => item.id === e.target.value);
               if (p) setSelectedPatient(p);
             }}
-            className="border border-slate-300 rounded-lg p-2 font-medium bg-white outline-none focus:ring-2 focus:ring-green-500"
+            className="border border-slate-300 rounded-lg p-2 font-bold bg-white text-slate-900 outline-none focus:ring-2 focus:ring-slate-900"
           >
             {SAMPLE_PATIENTS.map(p => (
               <option key={p.id} value={p.id}>
@@ -115,24 +118,24 @@ export const PatientQRPassport: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Left: The Physical Ayushman Card Simulation */}
+        {/* Left: The Official Ayushman Card */}
         <div className="md:col-span-2 space-y-4">
-          <div className="bg-gradient-to-br from-green-800 via-green-900 to-emerald-950 text-white rounded-2xl p-6 shadow-xl border-4 border-green-600 relative overflow-hidden">
+          <div className="bg-slate-900 text-white rounded-2xl p-6 shadow-xl border-4 border-slate-800 relative overflow-hidden">
             {/* Card Header */}
-            <div className="flex items-start justify-between border-b border-green-700/60 pb-4">
+            <div className="flex items-start justify-between border-b border-slate-700 pb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <Shield className="w-5 h-5 text-amber-400" />
-                  <span className="font-extrabold text-sm tracking-wider uppercase">
-                    Ayushman Digital Health Passport
+                  <span className="font-black text-sm tracking-wider uppercase">
+                    {t.cardHeader}
                   </span>
                 </div>
-                <span className="text-[11px] text-green-200 font-mono">
-                  Govt. of Maharashtra • Rural Telemedicine Network
+                <span className="text-[11px] text-slate-300 font-medium">
+                  {t.cardSubheader}
                 </span>
               </div>
-              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase tracking-wider">
-                Offline Verified
+              <span className="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded uppercase tracking-wider">
+                {t.verifiedOffline}
               </span>
             </div>
 
@@ -140,52 +143,52 @@ export const PatientQRPassport: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 my-6 items-center">
               <div className="sm:col-span-2 space-y-3">
                 <div>
-                  <span className="text-[10px] uppercase text-green-300 block font-bold">Patient Legal Name</span>
-                  <h3 className="text-xl font-black tracking-tight">{selectedPatient.name}</h3>
+                  <span className="text-[10px] uppercase text-slate-400 block font-bold">Patient Legal Identity</span>
+                  <h3 className="text-xl font-black tracking-tight text-white">{selectedPatient.name}</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3 text-xs">
                   <div>
-                    <span className="text-[10px] text-green-300 block">ABHA Health ID</span>
-                    <strong className="font-mono text-amber-300">{selectedPatient.abhaId}</strong>
+                    <span className="text-[10px] text-slate-400 block">{t.abhaId}</span>
+                    <strong className="font-mono text-amber-300 font-bold">{selectedPatient.abhaId}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-green-300 block">Blood Group</span>
-                    <strong>{selectedPatient.bloodGroup}</strong>
+                    <span className="text-[10px] text-slate-400 block">{t.bloodGroup}</span>
+                    <strong className="text-white">{selectedPatient.bloodGroup}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-green-300 block">Age / Gender</span>
-                    <strong>{selectedPatient.age} yrs • {selectedPatient.gender}</strong>
+                    <span className="text-[10px] text-slate-400 block">Age / Gender</span>
+                    <strong className="text-white">{selectedPatient.age} yrs • {selectedPatient.gender}</strong>
                   </div>
                   <div>
-                    <span className="text-[10px] text-green-300 block">Home Sub-Center</span>
-                    <strong>{selectedPatient.village}</strong>
+                    <span className="text-[10px] text-slate-400 block">{t.homeCenter}</span>
+                    <strong className="text-white">{selectedPatient.village}</strong>
                   </div>
                 </div>
               </div>
 
-              {/* Real-time QR Code Canvas */}
+              {/* QR Code */}
               <div className="flex flex-col items-center justify-center bg-white p-3 rounded-xl shadow-inner text-slate-900 mx-auto">
                 <QRCodeSVG
                   value={qrData}
-                  size={135}
+                  size={130}
                   level="M"
                   includeMargin={false}
                 />
-                <span className="text-[9px] font-extrabold uppercase mt-1.5 text-slate-600 tracking-tighter">
-                  Scan to Decrypt
+                <span className="text-[9px] font-black uppercase mt-1.5 text-slate-700 tracking-tighter">
+                  {t.scanToDecrypt}
                 </span>
               </div>
             </div>
 
-            {/* Card Footer Vitals Capsule */}
-            <div className="border-t border-green-700/60 pt-3 flex flex-wrap items-center justify-between text-xs text-green-200 gap-2">
+            {/* Card Footer */}
+            <div className="border-t border-slate-700 pt-3 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-2">
               <div>
-                Emergency Contact: <strong className="text-white">{selectedPatient.emergencyContact}</strong>
+                {t.emergencyContact}: <strong className="text-white">{selectedPatient.emergencyContact}</strong>
               </div>
-              <div className="flex items-center gap-1.5 text-amber-300 font-semibold">
-                <CheckCircle className="w-4 h-4 text-emerald-400" />
-                <span>Encrypted with SHA-256 Web Crypto</span>
+              <div className="flex items-center gap-1.5 text-emerald-400 font-semibold">
+                <CheckCircle className="w-4 h-4" />
+                <span>SHA-256 AES-GCM Encrypted</span>
               </div>
             </div>
           </div>
@@ -193,47 +196,45 @@ export const PatientQRPassport: React.FC = () => {
           <div className="flex gap-3">
             <button
               onClick={() => window.print()}
-              className="flex-1 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+              className="flex-1 bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
             >
-              <Printer className="w-4 h-4 text-slate-500" /> Print Physical Health Passport Card
+              <Printer className="w-4 h-4 text-slate-600" /> {t.printCard}
             </button>
             <button
-              onClick={() => alert("Digital ABHA Passport downloaded to device storage!")}
-              className="flex-1 bg-green-700 hover:bg-green-800 text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-sm"
+              onClick={() => alert("Digital Arogya Passport pass exported to local device!")}
+              className="flex-1 bg-slate-900 hover:bg-black text-white font-bold py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
             >
-              <Download className="w-4 h-4" /> Export Offline Wallet Pass
+              <Download className="w-4 h-4" /> {t.downloadPass}
             </button>
           </div>
         </div>
 
-        {/* Right: Live QR Code Scanner / Decryption Preview */}
-        <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+        {/* Right: Scanned Payload Preview */}
+        <div className="bg-white p-5 rounded-xl border border-slate-300 shadow-sm space-y-4">
           <div className="border-b pb-2 flex items-center gap-2">
-            <Smartphone className="w-5 h-5 text-green-600" />
-            <h4 className="font-bold text-sm text-slate-800">Scanned QR Payload Preview</h4>
+            <Smartphone className="w-5 h-5 text-slate-800" />
+            <h4 className="font-bold text-sm text-slate-900">{t.previewTitle}</h4>
           </div>
-          <p className="text-xs text-slate-500">
-            Scan this QR code with any smartphone camera right now to verify how records transfer without internet!
-          </p>
+          <p className="text-xs text-slate-600">{t.previewDesc}</p>
 
-          <div className="bg-slate-900 text-emerald-400 font-mono text-[11px] p-3 rounded-lg overflow-x-auto border border-slate-800 leading-relaxed">
+          <div className="bg-slate-950 text-emerald-400 font-mono text-[11px] p-3 rounded-lg overflow-x-auto border border-slate-800 leading-relaxed shadow-inner">
             <pre className="whitespace-pre-wrap">{JSON.stringify(JSON.parse(qrData), null, 2)}</pre>
           </div>
 
           <div className="space-y-2 text-xs border-t pt-3">
             <div>
-              <span className="text-slate-400 block">Allergies on Record:</span>
+              <span className="text-slate-500 block font-medium">Allergies on Record:</span>
               <div className="flex flex-wrap gap-1 mt-1">
                 {selectedPatient.allergies.map((a, i) => (
-                  <span key={i} className="bg-red-50 text-red-700 border border-red-200 px-2 py-0.5 rounded font-semibold text-[11px]">
+                  <span key={i} className="bg-red-50 text-red-800 border border-red-200 px-2 py-0.5 rounded font-bold text-[11px]">
                     {a}
                   </span>
                 ))}
               </div>
             </div>
             <div>
-              <span className="text-slate-400 block">Last Active Tele-Prescription:</span>
-              <p className="text-slate-800 font-medium mt-0.5 bg-slate-50 p-2 rounded border border-slate-200">
+              <span className="text-slate-500 block font-medium">Active Prescription:</span>
+              <p className="text-slate-900 font-bold mt-0.5 bg-slate-50 p-2 rounded border border-slate-200">
                 {selectedPatient.lastPrescription}
               </p>
             </div>

@@ -103,9 +103,9 @@ export const WorkerPortal: React.FC<WorkerPortalProps> = ({ lang = 'en' }) => {
     <div className="max-w-2xl mx-auto p-4 space-y-5 pb-12 font-sans">
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
         <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-          <HeartPulse className="w-6 h-6 text-green-600" /> {t.ashaIntakeTitle}
+          <HeartPulse className="w-6 h-6 text-green-600" /> {t.intakeTitle}
         </h2>
-        <p className="text-xs text-slate-500 mt-1">{t.ashaIntakeDesc}</p>
+        <p className="text-xs text-slate-500 mt-1">{t.intakeDesc}</p>
       </div>
 
       {savedSuccess && (
