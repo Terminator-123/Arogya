@@ -12,6 +12,7 @@ export const TRANSLATIONS = {
 
     // Navigation Tabs
     tabWorker: 'ASHA Field Intake',
+    tabScanner: 'AI Vision & Wound Scanner',
     tabDoctor: 'Doctor Command Center',
     tabMap: 'Outbreak Surveillance GIS',
     tabPassport: 'Offline QR Health Pass',
@@ -56,6 +57,22 @@ export const TRANSLATIONS = {
     voiceDesc: 'Speak in Marathi/Hindi for hands-free intake',
     recordVoice: 'Record Audio Note',
     recordingVoice: 'Recording (Listening)...',
+
+    // AI Vision Scanner
+    scannerTitle: 'On-Device AI Clinical Vision & Wound Scanner',
+    scannerDesc: 'Offline computer vision for diagnosing snakebites, severe conjunctival anemia, and farm injuries in tribal regions.',
+    selectCase: 'Select Clinical Case / Scan Sample',
+    caseSnakebite: "Russell's Viper Envenomation (Bite Marks)",
+    caseAnemia: 'Severe Maternal Eye Pallor / Anemia',
+    caseWound: 'Infected Farm Injury / Gangrenous Ulcer',
+    uploadCustom: 'Upload / Capture Custom Image',
+    scanAction: 'Run AI Diagnostic Vision Model',
+    scanningStatus: 'Running On-Device Neural Vision Model...',
+    detectedFeatures: 'Detected Pathological Features',
+    confidenceScore: 'AI Confidence Score',
+    recommendedProtocol: 'Emergency Pre-Hospital Clinical Protocol',
+    attachToRecord: 'Attach Encrypted Scan to Outbox Queue',
+    scanAttachedSuccess: 'Visual diagnosis attached to patient record and queued for sync!',
 
     // Doctor Command Center
     docTitle: 'District Tele-Referral Command Center',
@@ -144,6 +161,7 @@ export const TRANSLATIONS = {
 
     // Navigation Tabs
     tabWorker: 'आशा सेविका नोंदणी',
+    tabScanner: 'AI कॅमेरा व सर्पदंश तपासणी',
     tabDoctor: 'डॉक्टर कमांड सेंटर',
     tabMap: 'साथरोग नियंत्रण नकाशा',
     tabPassport: 'ऑफलाइन QR हेल्थ पास',
@@ -188,6 +206,22 @@ export const TRANSLATIONS = {
     voiceDesc: 'टाईप न करता थेट मराठीत बोलून नोंद करा',
     recordVoice: 'व्हॉईस नोट रेकॉर्ड करा',
     recordingVoice: 'रेकॉर्डिंग सुरू आहे (ऐकत आहे)...',
+
+    // AI Vision Scanner
+    scannerTitle: 'AI कॉम्प्युटर विझन: सर्पदंश व जखम तपासणी',
+    scannerDesc: 'इंटरनेटशिवाय थेट मोबाईल कॅमेऱ्याने सर्पदंशाचे दात, तीव्र ॲनिमिया आणि शेतातील जखमांची अचूक तपासणी.',
+    selectCase: 'तपासणीचा प्रकार निवडा',
+    caseSnakebite: 'घोणस सर्पदंश (दंशाच्या खुणा व सूज)',
+    caseAnemia: 'तीव्र ॲनिमिया (डोळ्यांमधील फिकटपणा Hb < ७)',
+    caseWound: 'शेतातील संसर्ग झालेली जखम',
+    uploadCustom: 'स्वतःचा फोटो अपलोड / कॅमेरा सुरू करा',
+    scanAction: 'AI विझन तपासणी सुरू करा',
+    scanningStatus: 'मोबाईलमधील AI मॉडेल तपासणी करत आहे...',
+    detectedFeatures: 'शोधलेली वैद्यकीय लक्षणे',
+    confidenceScore: 'AI अचूकता प्रमाण (Confidence)',
+    recommendedProtocol: 'तातडीने करावयाचे प्रथमोपचार व औषधोपचार',
+    attachToRecord: 'हा फोटो रुग्णाच्या फाईलला जोडा',
+    scanAttachedSuccess: 'तपासणी रुग्णाच्या फाईलला सुरक्षितपणे जोडली गेली!',
 
     // Doctor Command Center
     docTitle: 'जिल्हा टेलि-रेफरल कमांड सेंटर',
@@ -276,6 +310,7 @@ export const TRANSLATIONS = {
 
     // Navigation Tabs
     tabWorker: 'आशा पंजीकरण',
+    tabScanner: 'AI विज़न एवं सर्पदंश जांच',
     tabDoctor: 'डॉक्टर कमांड सेंटर',
     tabMap: 'प्रकोप निगरानी मानचित्र',
     tabPassport: 'ऑफ़लाइन QR हेल्थ पास',
@@ -320,6 +355,22 @@ export const TRANSLATIONS = {
     voiceDesc: 'टाइप करने की आवश्यकता नहीं, सीधे हिंदी में बोलें',
     recordVoice: 'वॉयस नोट रिकॉर्ड करें',
     recordingVoice: 'रिकॉर्डिंग जारी है (सुन रहा है)...',
+
+    // AI Vision Scanner
+    scannerTitle: 'ऑफ़लाइन AI विज़न: सर्पदंश एवं घाव जांच',
+    scannerDesc: 'बिना इंटरनेट के मोबाइल कैमरे द्वारा सर्पदंश के निशान, गंभीर एनीमिया एवं घावों की त्वरित कंप्यूटर विज़न जांच।',
+    selectCase: 'जांच का प्रकार चुनें',
+    caseSnakebite: "रसेल वाइपर सर्पदंश (दंश निशान व सूजन)",
+    caseAnemia: 'गंभीर एनीमिया (आंखों में पीलापन Hb < 7)',
+    caseWound: 'खेत में लगी संक्रमित चोट',
+    uploadCustom: 'अपनी फोटो अपलोड करें / कैमरा शुरू करें',
+    scanAction: 'AI विज़न जांच शुरू करें',
+    scanningStatus: 'डिवाइस का AI मॉडल जांच कर रहा है...',
+    detectedFeatures: 'पहचाने गए रोग लक्षण',
+    confidenceScore: 'AI सटीकता स्कोर (Confidence)',
+    recommendedProtocol: 'तत्काल पूर्व-अस्पताल प्राथमिक उपचार',
+    attachToRecord: 'यह जांच मरीज की फाइल में जोड़ें',
+    scanAttachedSuccess: 'जांच मरीज की फ़ाइल में सुरक्षित रूप से जुड़ गई!',
 
     // Doctor Command Center
     docTitle: 'जिला टेली-रेफरल कमांड सेंटर',

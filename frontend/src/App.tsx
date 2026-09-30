@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NetworkBadge } from './components/NetworkBadge';
 import { WorkerPortal } from './components/WorkerPortal';
+import { AIVisionScanner } from './components/AIVisionScanner';
 import { DoctorPortal } from './components/DoctorPortal';
 import { OutbreakMap } from './components/OutbreakMap';
 import { PatientQRPassport } from './components/PatientQRPassport';
@@ -9,6 +10,7 @@ import { SimulationLab } from './components/SimulationLab';
 import { TRANSLATIONS, type Language } from './utils/i18n';
 import { 
   Users, 
+  Camera,
   Stethoscope, 
   MapPin, 
   QrCode, 
@@ -19,7 +21,7 @@ import {
   Sun
 } from 'lucide-react';
 
-type TabView = 'worker' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
+type TabView = 'worker' | 'scanner' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
@@ -28,7 +30,6 @@ export const App: React.FC = () => {
 
   const t = TRANSLATIONS[lang] || TRANSLATIONS.mr;
 
-  // Real Sunlight Mode: attaches high-contrast class to document body
   useEffect(() => {
     if (sunlightMode) {
       document.body.classList.add('sunlight-theme');
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
 
   const navItems = [
     { id: 'worker', label: t.tabWorker, icon: Users },
+    { id: 'scanner', label: t.tabScanner, icon: Camera },
     { id: 'doctor', label: t.tabDoctor, icon: Stethoscope },
     { id: 'map', label: t.tabMap, icon: MapPin },
     { id: 'passport', label: t.tabPassport, icon: QrCode },
@@ -152,9 +154,10 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Page Body with lang passed to every page */}
+      {/* Main Page Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
         {activeTab === 'worker' && <WorkerPortal lang={lang} />}
+        {activeTab === 'scanner' && <AIVisionScanner lang={lang} />}
         {activeTab === 'doctor' && <DoctorPortal lang={lang} />}
         {activeTab === 'map' && <OutbreakMap lang={lang} />}
         {activeTab === 'passport' && <PatientQRPassport lang={lang} />}
