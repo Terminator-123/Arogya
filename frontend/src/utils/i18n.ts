@@ -13,6 +13,7 @@ export const TRANSLATIONS = {
     // Navigation Tabs
     tabWorker: 'ASHA Field Intake',
     tabScanner: 'AI Vision & Wound Scanner',
+    tabChat: 'Arogya Sathi AI Bot',
     tabDoctor: 'Doctor Command Center',
     tabMap: 'Outbreak Surveillance GIS',
     tabPassport: 'Offline QR Health Pass',
@@ -73,6 +74,19 @@ export const TRANSLATIONS = {
     recommendedProtocol: 'Emergency Pre-Hospital Clinical Protocol',
     attachToRecord: 'Attach Encrypted Scan to Outbox Queue',
     scanAttachedSuccess: 'Visual diagnosis attached to patient record and queued for sync!',
+
+    // AI Chatbot
+    chatTitle: 'Arogya Sathi: Clinical AI Tele-Consultant',
+    chatDesc: 'Instant emergency clinical protocols, dosage calculators, and triage advice for rural health workers in English, Marathi, & Hindi.',
+    chatPlaceholder: 'Ask a clinical question (e.g., Snakebite emergency steps, pediatric Paracetamol dose)...',
+    quickQuestions: 'Quick Clinical Queries',
+    sendChat: 'Send Query',
+    botWelcome: 'Namaste! I am Arogya Sathi (आरोग्य साथी), your rural clinical AI assistant. I can guide you on emergency triage, medication dosages, and pre-hospital protocols even over low-bandwidth connections. How can I assist you today?',
+    typing: 'Consulting National Health Mission guidelines...',
+    quick1: 'Snakebite Emergency Steps',
+    quick2: 'Pediatric ORS Dosage',
+    quick3: 'High BP in 32-Week Pregnancy',
+    quick4: 'Chest Pain Emergency Checklist',
 
     // Doctor Command Center
     docTitle: 'District Tele-Referral Command Center',
@@ -162,6 +176,7 @@ export const TRANSLATIONS = {
     // Navigation Tabs
     tabWorker: 'आशा सेविका नोंदणी',
     tabScanner: 'AI कॅमेरा व सर्पदंश तपासणी',
+    tabChat: 'आरोग्य साथी AI बॉट',
     tabDoctor: 'डॉक्टर कमांड सेंटर',
     tabMap: 'साथरोग नियंत्रण नकाशा',
     tabPassport: 'ऑफलाइन QR हेल्थ पास',
@@ -222,6 +237,19 @@ export const TRANSLATIONS = {
     recommendedProtocol: 'तातडीने करावयाचे प्रथमोपचार व औषधोपचार',
     attachToRecord: 'हा फोटो रुग्णाच्या फाईलला जोडा',
     scanAttachedSuccess: 'तपासणी रुग्णाच्या फाईलला सुरक्षितपणे जोडली गेली!',
+
+    // AI Chatbot
+    chatTitle: 'आरोग्य साथी: AI वैद्यकीय सल्लागार बॉट',
+    chatDesc: 'आशा सेविका व आरोग्य कर्मचाऱ्यांसाठी तात्काळ प्रथमोपचार, औषधांची मात्रा आणि आपत्कालीन मार्गदर्शन.',
+    chatPlaceholder: 'वैद्यकीय प्रश्न विचारा (उदा. सर्पदंश प्रथमोपचार, बालकांसाठी पॅरासिटामॉल प्रमाण)...',
+    quickQuestions: 'नेहमी विचारले जाणारे प्रश्न',
+    sendChat: 'प्रश्न पाठवा',
+    botWelcome: 'नमस्ते! मी आरोग्य साथी (Arogya Sathi) आहे. मी राष्ट्रीय आरोग्य अभियानाच्या (NHM) मार्गदर्शक तत्त्वांनुसार आपत्कालीन ट्रायज, औषधांचे प्रमाण आणि प्रथमोपचाराबाबत मराठीत मार्गदर्शन करू शकतो. मी तुम्हाला काय मदत करू?',
+    typing: 'वैद्यकीय मार्गदर्शक तत्त्वांची तपासणी सुरू आहे...',
+    quick1: 'सर्पदंश तातडीचे प्रथमोपचार',
+    quick2: 'जलसंजीवन (ORS) पाण्याचे प्रमाण',
+    quick3: 'गरोदरपणात उच्च रक्तदाब धोके',
+    quick4: 'छातीत दुखणे आणीबाणी तपासणी',
 
     // Doctor Command Center
     docTitle: 'जिल्हा टेलि-रेफरल कमांड सेंटर',
@@ -311,6 +339,7 @@ export const TRANSLATIONS = {
     // Navigation Tabs
     tabWorker: 'आशा पंजीकरण',
     tabScanner: 'AI विज़न एवं सर्पदंश जांच',
+    tabChat: 'आरोग्य साथी AI बॉट',
     tabDoctor: 'डॉक्टर कमांड सेंटर',
     tabMap: 'प्रकोप निगरानी मानचित्र',
     tabPassport: 'ऑफ़लाइन QR हेल्थ पास',
@@ -371,6 +400,19 @@ export const TRANSLATIONS = {
     recommendedProtocol: 'तत्काल पूर्व-अस्पताल प्राथमिक उपचार',
     attachToRecord: 'यह जांच मरीज की फाइल में जोड़ें',
     scanAttachedSuccess: 'जांच मरीज की फ़ाइल में सुरक्षित रूप से जुड़ गई!',
+
+    // AI Chatbot
+    chatTitle: 'आरोग्य साथी: AI नैदानिक टेली-सलाहकार बॉट',
+    chatDesc: 'आशा कार्यकर्ताओं एवं स्वास्थ्य कर्मियों के लिए तत्काल प्राथमिक उपचार, दवा खुराक व आपातकालीन ट्राइएज मार्गदर्शन।',
+    chatPlaceholder: 'चिकित्सा प्रश्न पूछें (उदा. सर्पदंश आपातकालीन कदम, बच्चों के लिए पैरासिटामोल खुराक)...',
+    quickQuestions: 'त्वरित नैदानिक प्रश्न',
+    sendChat: 'प्रश्न भेजें',
+    botWelcome: 'नमस्ते! मैं आरोग्य साथी (Arogya Sathi) हूँ, आपका ग्रामीण नैदानिक AI सहायक। मैं राष्ट्रीय स्वास्थ्य मिशन (NHM) के अनुसार आपातकालीन ट्राइएज, दवा खुराक और अस्पताल पूर्व प्रोटोकॉल पर मार्गदर्शन कर सकता हूँ। मैं आपकी क्या सहायता करूँ?',
+    typing: 'चिकित्सा दिशानिर्देशों की जांच की जा रही है...',
+    quick1: 'सर्पदंश आपातकालीन कदम',
+    quick2: 'बच्चों के लिए ORS की खुराक',
+    quick3: 'गर्भावस्था में उच्च रक्तचाप के खतरे',
+    quick4: 'सीने में दर्द आपातकालीन चेकलिस्ट',
 
     // Doctor Command Center
     docTitle: 'जिला टेली-रेफरल कमांड सेंटर',

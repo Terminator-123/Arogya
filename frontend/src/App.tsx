@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NetworkBadge } from './components/NetworkBadge';
 import { WorkerPortal } from './components/WorkerPortal';
 import { AIVisionScanner } from './components/AIVisionScanner';
+import { AIChatbot } from './components/AIChatbot';
 import { DoctorPortal } from './components/DoctorPortal';
 import { OutbreakMap } from './components/OutbreakMap';
 import { PatientQRPassport } from './components/PatientQRPassport';
@@ -11,6 +12,7 @@ import { TRANSLATIONS, type Language } from './utils/i18n';
 import { 
   Users, 
   Camera,
+  Bot,
   Stethoscope, 
   MapPin, 
   QrCode, 
@@ -21,7 +23,7 @@ import {
   Sun
 } from 'lucide-react';
 
-type TabView = 'worker' | 'scanner' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
+type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
@@ -41,6 +43,7 @@ export const App: React.FC = () => {
   const navItems = [
     { id: 'worker', label: t.tabWorker, icon: Users },
     { id: 'scanner', label: t.tabScanner, icon: Camera },
+    { id: 'chat', label: t.tabChat, icon: Bot },
     { id: 'doctor', label: t.tabDoctor, icon: Stethoscope },
     { id: 'map', label: t.tabMap, icon: MapPin },
     { id: 'passport', label: t.tabPassport, icon: QrCode },
@@ -49,7 +52,7 @@ export const App: React.FC = () => {
   ];
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans transition-colors ${
+    <div className={`min-h-screen flex flex-col font-sans transition-colors relative ${
       sunlightMode ? 'bg-amber-100 text-black' : 'bg-slate-100 text-slate-900'
     }`}>
       {/* Formal Top Government Ribbon */}
@@ -74,7 +77,7 @@ export const App: React.FC = () => {
                   {t.appTitle}
                 </h1>
                 <span className="text-[10px] font-black uppercase bg-slate-900 text-emerald-400 px-2 py-0.5 rounded tracking-wider">
-                  TELEMED v2.4
+                  TELEMED v2.5
                 </span>
               </div>
               <p className="text-xs text-slate-600 font-medium">
@@ -158,12 +161,27 @@ export const App: React.FC = () => {
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
         {activeTab === 'worker' && <WorkerPortal lang={lang} />}
         {activeTab === 'scanner' && <AIVisionScanner lang={lang} />}
+        {activeTab === 'chat' && <AIChatbot lang={lang} />}
         {activeTab === 'doctor' && <DoctorPortal lang={lang} />}
         {activeTab === 'map' && <OutbreakMap lang={lang} />}
         {activeTab === 'passport' && <PatientQRPassport lang={lang} />}
         {activeTab === 'pharmacy' && <MedicineInventory lang={lang} />}
         {activeTab === 'simulation' && <SimulationLab lang={lang} />}
       </main>
+
+      {/* Persistent Floating Quick Action Button (FAB) for AI Chatbot */}
+      {activeTab !== 'chat' && (
+        <button
+          onClick={() => setActiveTab('chat')}
+          className="fixed bottom-6 right-6 bg-slate-900 hover:bg-black text-white px-4 py-3 rounded-full shadow-2xl flex items-center gap-2.5 transition-all transform hover:scale-105 border-2 border-slate-700 z-40 cursor-pointer"
+        >
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+          <Bot className="w-5 h-5 text-emerald-400" />
+          <span className="text-xs font-bold tracking-wide">
+            {lang === 'mr' ? 'आरोग्य साथी AI' : lang === 'hi' ? 'आरोग्य साथी AI' : 'Arogya Sathi AI'}
+          </span>
+        </button>
+      )}
     </div>
   );
 };
