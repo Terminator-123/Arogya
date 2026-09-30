@@ -1,4 +1,4 @@
-# 🏥 Arogya: National Rural Telemedicine & Distributed Triage Network
+# 🏥 Arogya (आरोग्य): National Rural Telemedicine & Distributed Triage Network
 
 > **Hackconquest 2026 | TCET Mumbai**  
 > **Problem Statement 01:** Offline-First Rural Telemedicine PWA  
@@ -6,49 +6,68 @@
 
 ---
 
-## 🌟 Key Capabilities
+## 🌟 Key Capabilities & Modules
 
 1. **Formal Government & Clinical UI**
-   - Structured after National Health Mission (NHM) standards with clean slate/navy palette, official headers, and district surveillance integration.
+   - Structured following National Health Mission (NHM) standards with an authoritative slate/navy palette, official headers, and district surveillance integration.
 
 2. **Full Multi-Language Localization (English / मराठी / हिंदी)**
-   - True deep localization across **ALL 6 pages** (Intake, Doctor Command, Outbreak GIS, QR Passport, Pharmacy, Simulation Lab).
+   - True deep localization across **ALL pages** (Intake, Doctor Command, Outbreak GIS, QR Passport, Pharmacy, Simulation Lab, AI Chatbot).
 
 3. **Field Sunlight Mode (High-Contrast Anti-Glare)**
-   - High-contrast outdoor mode engineered for frontline ASHA workers operating under direct sunlight.
+   - High-contrast outdoor mode engineered for frontline ASHA/ANM workers operating under harsh direct sunlight.
 
 4. **100% Offline-First PWA & Web Crypto AES-GCM Encryption**
-   - Service Workers with complete App Shell precaching.
-   - Client-side AES-GCM 256-bit encryption protecting patient data on local IndexedDB storage.
+   - Service Workers with complete App Shell precaching via Workbox.
+   - Client-side AES-GCM 256-bit encryption protecting patient vitals and medical records on local IndexedDB storage.
 
 5. **On-Device MEWS Clinical Risk Engine**
-   - Calculates Modified Early Warning Scores (MEWS) on-device without cloud dependency.
+   - Calculates Modified Early Warning Scores (MEWS) on-device without cloud dependency, categorizing cases into Green (Normal), Yellow (Observation), and Red (Critical).
 
-6. **Distributed 3-Way Merge Conflict Resolution**
-   - Atomic field-level merge preserving concurrent edits between rural health workers and tele-physicians.
+6. **On-Device AI Vision Clinical & Snakebite Scanner**
+   - Neural detection of necrotic tissue, envenomation fang marks, cellulitis, and wound healing indices with simulated canvas bounding boxes and instant WHO/NHM anti-venom triage.
 
-7. **Offline Ayushman ABHA QR Health Passport**
-   - Generates scannable offline QR health cards for paper or mobile wallet use.
+7. **Arogya Sathi AI (आरोग्य साथी एआय) Clinical Chatbot**
+   - Dual-engine clinical assistant: Connects to Google Gemini API when online, with instant client-side offline emergency fallback for snakebites, pediatric dosages, and severe dehydration.
+   - Accessible via dedicated navigation tab or persistent 1-click floating action button (FAB) on all screens.
 
-8. **108 Emergency Ambulance GPS Dispatch**
-   - Real-time transit telemetry and driver dispatch protocol for Code Red emergencies.
+8. **Distributed 3-Way Merge Conflict Resolution**
+   - Atomic field-level merge preserving concurrent edits between rural health workers and tele-physicians when reconnecting after connectivity blackouts.
+
+9. **Offline Ayushman ABHA QR Health Passport**
+   - Generates and scans offline compressed QR health cards for instant patient identification in network dead zones.
+
+10. **108 Emergency Ambulance GPS Dispatch & Simulation Lab**
+    - Live transit telemetry, driver dispatch protocol for Code Red emergencies, and interactive network simulator (Online, 2G EDGE, 100% Offline).
 
 ---
 
 ## 🚀 Quick Start Guide
 
-### 1. Start the Backend
+### Prerequisites
+- Node.js (v18+)
+- Git
+
+### 1. Start the Backend API
 ```bash
 cd backend
 npm install
 npm start
 ```
-*Backend: `http://localhost:5000`*
+*Backend runs at: `http://localhost:5000`*
 
-### 2. Start the Frontend
+### 2. Start the Frontend PWA
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-*Frontend: `http://localhost:5173`*
+*Frontend runs at: `http://localhost:5173`*
+
+---
+
+## 📱 Tech Stack
+- **Frontend:** React 19, TypeScript, Vite, Tailwind CSS v4, Lucide Icons, Canvas API, Web Audio API, Service Workers.
+- **Backend:** Node.js, Express, Google Gemini SDK, CORS, RESTful API.
+- **Storage & Security:** IndexedDB (Dexie/Local), Web Crypto API (AES-GCM 256-bit).
+- **Standards:** National Health Mission (NHM) / WHO Clinical Triage Protocols.
