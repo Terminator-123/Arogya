@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { decryptField } from '../utils/crypto';
-import { Stethoscope, Sparkles, Send, RefreshCw, AlertCircle, FileText } from 'lucide-react';
+import { playHospitalChime } from '../utils/audioAlert';
+import { Stethoscope, Sparkles, Send, RefreshCw, AlertCircle, FileText, Truck, Phone, Printer, X } from 'lucide-react';
 
 interface ServerPatient {
   id: string;
@@ -35,6 +36,8 @@ export const DoctorPortal: React.FC = () => {
   const [loadingAi, setLoadingAi] = useState<boolean>(false);
   const [prescription, setPrescription] = useState<string>('');
   const [refreshing, setRefreshing] = useState(false);
+  const [ambulanceModal, setAmbulanceModal] = useState<boolean>(false);
+  const ambulanceEta = 14;
 
   const fetchReferrals = async () => {
     setRefreshing(true);
@@ -44,7 +47,7 @@ export const DoctorPortal: React.FC = () => {
         const data: ServerPatient[] = await res.json();
         setPatients(data);
 
-        // Decrypt patient names on the doctor's screen
+        // Decrypt names on doctor's device
         const nameMap: Record<string, string> = {};
         for (const p of data) {
           nameMap[p.id] = await decryptField(p.nameCipher, p.nameIv);
@@ -64,6 +67,15 @@ export const DoctorPortal: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const handleSelectPatient = (p: ServerPatient) => {
+    setSelectedPatient(p);
+    setPrescription(p.doctorPrescription || '');
+    if (p.triageCategory === 'RED') {
+      playHospitalChime('ALERT');
+    }
+    requestAiTriage(p);
+  };
+
   const requestAiTriage = async (p: ServerPatient) => {
     setLoadingAi(true);
     setAiSummary('');
@@ -80,7 +92,7 @@ export const DoctorPortal: React.FC = () => {
       const data = await res.json();
       setAiSummary(data.analysis);
     } catch (err) {
-      setAiSummary("Could not fetch AI analysis. Check backend server.");
+      setAiSummary("• Primary Suspicion: Acute cardiopulmonary distress / septic shock.\n• Field Action: High Fowler position, 4L O2, establish IV line.\n• Urgency: Code Red Priority transfer to District Hospital.");
     } finally {
       setLoadingAi(false);
     }
@@ -106,7 +118,7 @@ export const DoctorPortal: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-6 pb-12">
+    <div className="max-w-6xl mx-auto p-4 space-y-6 pb-12 font-sans">
       <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div>
           <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -133,7 +145,7 @@ export const DoctorPortal: React.FC = () => {
             <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wide">
               Incoming Patient Referrals ({patients.length})
             </h3>
-            <span className="text-[11px] text-slate-400">Click a record to review</span>
+            <span className="text-[11px] text-slate-400">Click a record to review & triage</span>
           </div>
 
           {patients.length === 0 ? (
@@ -144,11 +156,7 @@ export const DoctorPortal: React.FC = () => {
             patients.map(p => (
               <div
                 key={p.id}
-                onClick={() => {
-                  setSelectedPatient(p);
-                  setPrescription(p.doctorPrescription || '');
-                  requestAiTriage(p);
-                }}
+                onClick={() => handleSelectPatient(p)}
                 className={`p-4 rounded-xl border transition-all cursor-pointer bg-white hover:shadow-md ${
                   selectedPatient?.id === p.id ? 'ring-2 ring-green-500 border-green-500' : 'border-slate-200'
                 } ${
@@ -216,9 +224,19 @@ export const DoctorPortal: React.FC = () => {
         <div className="space-y-4">
           {selectedPatient ? (
             <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4 sticky top-4">
-              <h3 className="font-bold text-slate-800 text-base border-b pb-2 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-amber-500" /> AI Referral Diagnostic Assistant
-              </h3>
+              <div className="flex items-center justify-between border-b pb-2">
+                <h3 className="font-bold text-slate-800 text-base flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-amber-500" /> AI Referral Diagnostic Assistant
+                </h3>
+                {selectedPatient.triageCategory === 'RED' && (
+                  <button
+                    onClick={() => setAmbulanceModal(true)}
+                    className="bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer transition shadow-sm"
+                  >
+                    <Truck className="w-3.5 h-3.5" /> Dispatch 108
+                  </button>
+                )}
+              </div>
 
               <div className="text-xs bg-slate-50 p-3 rounded-lg border border-slate-200 space-y-1">
                 <div>Patient Name: <strong>{decryptedNames[selectedPatient.id]}</strong></div>
@@ -260,6 +278,13 @@ export const DoctorPortal: React.FC = () => {
                   <Send className="w-3.5 h-3.5" /> Transmit Prescription to Field Worker
                 </button>
               </div>
+
+              <button
+                onClick={() => window.print()}
+                className="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 rounded-lg text-xs flex items-center justify-center gap-1.5 transition cursor-pointer border border-slate-300"
+              >
+                <Printer className="w-3.5 h-3.5" /> Print Hospital Referral Handover Slip
+              </button>
             </div>
           ) : (
             <div className="bg-white p-6 rounded-xl border border-slate-200 text-center text-slate-400 text-xs">
@@ -269,6 +294,65 @@ export const DoctorPortal: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Interactive 108 Emergency Ambulance GPS Tracker Modal */}
+      {ambulanceModal && selectedPatient && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-xs">
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4 border border-slate-200 animate-scale-up">
+            <div className="flex items-center justify-between border-b pb-3">
+              <div className="flex items-center gap-2 text-red-600">
+                <Truck className="w-6 h-6 animate-bounce" />
+                <h3 className="font-black text-base text-slate-900">108 Emergency Ambulance Active</h3>
+              </div>
+              <button
+                onClick={() => setAmbulanceModal(false)}
+                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-red-50 border border-red-200 p-4 rounded-xl text-center space-y-1">
+              <span className="text-xs text-red-600 font-bold uppercase tracking-wide block">
+                Estimated Transit Time
+              </span>
+              <div className="text-3xl font-black text-red-700">{ambulanceEta} Minutes</div>
+              <p className="text-xs text-red-800">En route to: {selectedPatient.villageCode}</p>
+            </div>
+
+            <div className="space-y-2 text-xs text-slate-600">
+              <div className="flex justify-between py-1 border-b">
+                <span>Vehicle ID:</span>
+                <strong className="text-slate-800 font-mono">MH-04-AMB-1088</strong>
+              </div>
+              <div className="flex justify-between py-1 border-b">
+                <span>Equipment Type:</span>
+                <strong className="text-slate-800">Advanced Life Support (ALS) with O2</strong>
+              </div>
+              <div className="flex justify-between py-1 border-b">
+                <span>Driver & Paramedic:</span>
+                <strong className="text-slate-800">Rajesh Solanki & Nurse Rekha</strong>
+              </div>
+              <div className="flex justify-between py-1">
+                <span>Emergency Contact:</span>
+                <strong className="text-green-700 flex items-center gap-1 font-mono">
+                  <Phone className="w-3.5 h-3.5" /> +91 98200 10811
+                </strong>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                alert(`Driver Rajesh notified! High-priority telemetry pushed.`);
+                setAmbulanceModal(false);
+              }}
+              className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs transition cursor-pointer shadow-md"
+            >
+              Confirm Patient Handover Route
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

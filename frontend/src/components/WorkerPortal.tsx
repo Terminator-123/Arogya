@@ -3,19 +3,19 @@ import { db, type LocalPatient } from '../db/db';
 import { encryptField } from '../utils/crypto';
 import { evaluateClinicalTriage, type PatientVitals } from '../utils/triage';
 import { SyncEngine } from '../services/syncEngine';
+import { playHospitalChime } from '../utils/audioAlert';
+import { TRANSLATIONS, type Language } from '../utils/i18n';
+import { BodyOrganSelector } from './BodyOrganSelector';
+import { VoiceNoteRecorder } from './VoiceNoteRecorder';
 import { AlertCircle, CheckCircle2, ShieldCheck, HeartPulse } from 'lucide-react';
 
-const SYMPTOM_OPTIONS = [
-  'High Fever (>3 days)',
-  'Chest Pain (Radiating)',
-  'Acute Shortness of Breath',
-  'Severe Diarrhea/Vomiting',
-  'Loss of Consciousness',
-  'Productive Cough',
-  'Severe Headache'
-];
+interface WorkerPortalProps {
+  lang?: Language;
+}
 
-export const WorkerPortal: React.FC = () => {
+export const WorkerPortal: React.FC<WorkerPortalProps> = ({ lang = 'en' }) => {
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
   const [name, setName] = useState('');
   const [age, setAge] = useState<number>(35);
   const [gender, setGender] = useState('Female');
@@ -33,13 +33,17 @@ export const WorkerPortal: React.FC = () => {
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
-  // Live on-device triage evaluation without network call
+  // Live on-device clinical MEWS triage evaluation without internet
   const liveTriage = evaluateClinicalTriage(vitals, selectedSymptoms);
 
   const toggleSymptom = (sym: string) => {
     setSelectedSymptoms(prev =>
       prev.includes(sym) ? prev.filter(s => s !== sym) : [...prev, sym]
     );
+  };
+
+  const handleVoiceTranscribed = (transcript: string) => {
+    setNotes(prev => (prev ? `${prev} | ${transcript}` : transcript));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -82,7 +86,8 @@ export const WorkerPortal: React.FC = () => {
       retries: 0
     });
 
-    // 4. Try auto-sync in background if online
+    // 4. Play audio chime & trigger auto-sync
+    playHospitalChime('CONFIRM');
     SyncEngine.triggerSync();
 
     setSavedSuccess(true);
@@ -91,26 +96,24 @@ export const WorkerPortal: React.FC = () => {
       setName('');
       setNotes('');
       setSelectedSymptoms([]);
-    }, 2500);
+    }, 3000);
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4 space-y-5 pb-12">
+    <div className="max-w-2xl mx-auto p-4 space-y-5 pb-12 font-sans">
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
         <h2 className="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
-          <HeartPulse className="w-6 h-6 text-green-600" /> Rural Health Worker: Clinical Intake
+          <HeartPulse className="w-6 h-6 text-green-600" /> {t.ashaIntakeTitle}
         </h2>
-        <p className="text-xs text-slate-500 mt-1">
-          Zero-connectivity enabled. All patient identifiable records are encrypted with local AES-GCM before saving to IndexedDB.
-        </p>
+        <p className="text-xs text-slate-500 mt-1">{t.ashaIntakeDesc}</p>
       </div>
 
       {savedSuccess && (
-        <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 rounded-xl flex items-center gap-3">
+        <div className="bg-emerald-50 border border-emerald-300 text-emerald-800 p-4 rounded-xl flex items-center gap-3 animate-fade-in shadow-sm">
           <CheckCircle2 className="w-6 h-6 text-emerald-600 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-sm">Patient Record Cached Locally</h4>
-            <p className="text-xs text-emerald-700">Encrypted in browser IndexedDB. Queued for background cloud synchronization.</p>
+            <h4 className="font-semibold text-sm">{t.savedSuccessTitle}</h4>
+            <p className="text-xs text-emerald-700">{t.savedSuccessDesc}</p>
           </div>
         </div>
       )}
@@ -130,7 +133,8 @@ export const WorkerPortal: React.FC = () => {
           <span className="font-extrabold text-base sm:text-lg">Clinical Score: {liveTriage.score}</span>
         </div>
         <div className="text-sm sm:text-base font-bold mt-1.5 flex items-center gap-1.5">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" /> {liveTriage.urgencyLabel}
+          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+          {liveTriage.category === 'RED' ? t.codeRed : liveTriage.category === 'YELLOW' ? t.codeYellow : t.codeGreen}
         </div>
         {liveTriage.flaggedReasons.length > 0 && (
           <ul className="text-xs list-disc list-inside mt-2 space-y-0.5 opacity-90">
@@ -142,20 +146,21 @@ export const WorkerPortal: React.FC = () => {
       </div>
 
       <form onSubmit={handleSave} className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 space-y-4">
+        {/* Patient Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Patient Full Name (Encrypted)</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">{t.patientName}</label>
             <input
               type="text"
               required
               value={name}
               onChange={e => setName(e.target.value)}
-              placeholder="e.g. Rameshwar Patil"
+              placeholder={t.patientNamePlaceholder}
               className="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-green-500 outline-none"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Village Sub-Center / Panchayat</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">{t.villageCode}</label>
             <input
               type="text"
               value={villageCode}
@@ -164,7 +169,7 @@ export const WorkerPortal: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Age</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">{t.age}</label>
             <input
               type="number"
               value={age}
@@ -173,28 +178,28 @@ export const WorkerPortal: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">Gender</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">{t.gender}</label>
             <select
               value={gender}
               onChange={e => setGender(e.target.value)}
               className="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white"
             >
-              <option>Female</option>
-              <option>Male</option>
-              <option>Other</option>
+              <option value="Female">{t.female}</option>
+              <option value="Male">{t.male}</option>
+              <option value="Other">{t.other}</option>
             </select>
           </div>
         </div>
 
-        {/* Vitals Grid */}
+        {/* Vitals Grid with Quick Clinical Touch Inputs */}
         <div className="border-t border-slate-200 pt-3">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">Patient Vitals</h4>
+            <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider">{t.vitalsTitle}</h4>
             <span className="text-[11px] text-slate-400">Updates live triage score</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
             <div>
-              <span className="text-slate-500 block mb-0.5">SpO2 Oxygen (%)</span>
+              <span className="text-slate-500 block mb-0.5">{t.spo2}</span>
               <input
                 type="number"
                 value={vitals.spo2}
@@ -203,7 +208,7 @@ export const WorkerPortal: React.FC = () => {
               />
             </div>
             <div>
-              <span className="text-slate-500 block mb-0.5">BP Systolic (mmHg)</span>
+              <span className="text-slate-500 block mb-0.5">{t.bpSystolic}</span>
               <input
                 type="number"
                 value={vitals.bpSystolic}
@@ -212,7 +217,7 @@ export const WorkerPortal: React.FC = () => {
               />
             </div>
             <div>
-              <span className="text-slate-500 block mb-0.5">BP Diastolic (mmHg)</span>
+              <span className="text-slate-500 block mb-0.5">{t.bpDiastolic}</span>
               <input
                 type="number"
                 value={vitals.bpDiastolic}
@@ -221,7 +226,7 @@ export const WorkerPortal: React.FC = () => {
               />
             </div>
             <div>
-              <span className="text-slate-500 block mb-0.5">Pulse Rate (bpm)</span>
+              <span className="text-slate-500 block mb-0.5">{t.pulse}</span>
               <input
                 type="number"
                 value={vitals.pulse}
@@ -230,7 +235,7 @@ export const WorkerPortal: React.FC = () => {
               />
             </div>
             <div>
-              <span className="text-slate-500 block mb-0.5">Body Temp (°C)</span>
+              <span className="text-slate-500 block mb-0.5">{t.temp}</span>
               <input
                 type="number"
                 step="0.1"
@@ -240,7 +245,7 @@ export const WorkerPortal: React.FC = () => {
               />
             </div>
             <div>
-              <span className="text-slate-500 block mb-0.5">Respiratory Rate (/min)</span>
+              <span className="text-slate-500 block mb-0.5">{t.respRate}</span>
               <input
                 type="number"
                 value={vitals.respiratoryRate}
@@ -251,43 +256,39 @@ export const WorkerPortal: React.FC = () => {
           </div>
         </div>
 
-        {/* Symptoms Selector */}
+        {/* Anatomical Organ Symptom Selector */}
         <div className="border-t border-slate-200 pt-3">
-          <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">Observed Symptoms</h4>
-          <div className="flex flex-wrap gap-2">
-            {SYMPTOM_OPTIONS.map(sym => (
-              <button
-                type="button"
-                key={sym}
-                onClick={() => toggleSymptom(sym)}
-                className={`text-xs px-3 py-1.5 rounded-full border transition-all cursor-pointer ${
-                  selectedSymptoms.includes(sym)
-                    ? 'bg-green-600 text-white border-green-600 font-semibold shadow-sm'
-                    : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                }`}
-              >
-                {sym}
-              </button>
-            ))}
-          </div>
+          <h4 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+            {t.bodySelectorTitle}
+          </h4>
+          <BodyOrganSelector
+            selectedSymptoms={selectedSymptoms}
+            onToggleSymptom={toggleSymptom}
+            lang={lang}
+          />
+        </div>
+
+        {/* Frontline Voice Note Recorder */}
+        <div className="border-t border-slate-200 pt-3">
+          <VoiceNoteRecorder onTranscribed={handleVoiceTranscribed} lang={lang} />
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-700 mb-1">Clinical Field Observations (Encrypted)</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">{t.fieldNotes}</label>
           <textarea
             rows={2}
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="Preliminary observation, medications given, village road accessibility..."
+            placeholder={t.fieldNotesPlaceholder}
             className="w-full border border-slate-300 rounded-lg p-2 text-sm outline-none focus:ring-2 focus:ring-green-500"
           />
         </div>
 
         <button
           type="submit"
-          className="w-full py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg shadow-sm flex items-center justify-center gap-2 transition cursor-pointer"
+          className="w-full py-3 bg-green-700 hover:bg-green-800 text-white font-bold rounded-lg shadow-sm flex items-center justify-center gap-2 transition cursor-pointer"
         >
-          <ShieldCheck className="w-5 h-5" /> Save Record (Encrypted to IndexedDB)
+          <ShieldCheck className="w-5 h-5" /> {t.saveBtn}
         </button>
       </form>
     </div>

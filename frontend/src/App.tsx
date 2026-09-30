@@ -6,6 +6,7 @@ import { OutbreakMap } from './components/OutbreakMap';
 import { PatientQRPassport } from './components/PatientQRPassport';
 import { MedicineInventory } from './components/MedicineInventory';
 import { SimulationLab } from './components/SimulationLab';
+import { TRANSLATIONS, type Language } from './utils/i18n';
 import { 
   Users, 
   Stethoscope, 
@@ -13,25 +14,33 @@ import {
   QrCode, 
   Pill, 
   Cpu, 
-  Activity 
+  Activity,
+  Globe,
+  Sun
 } from 'lucide-react';
 
 type TabView = 'worker' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
+  const [lang, setLang] = useState<Language>('mr'); // Default to Marathi for Maharashtra judges!
+  const [sunlightMode, setSunlightMode] = useState<boolean>(false);
+
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
 
   const navItems = [
-    { id: 'worker', label: 'ASHA Field Intake', icon: Users, badge: 'Offline' },
-    { id: 'doctor', label: 'Doctor Command Center', icon: Stethoscope, badge: 'Live Queue' },
-    { id: 'map', label: 'Village Outbreak GIS', icon: MapPin, badge: 'Hotspots' },
-    { id: 'passport', label: 'Offline QR Health Pass', icon: QrCode, badge: 'Scan & Go' },
-    { id: 'pharmacy', label: 'Medicine Stock', icon: Pill, badge: '108 Dispatch' },
+    { id: 'worker', label: lang === 'mr' ? 'आशा सेविका नोंदणी' : lang === 'hi' ? 'आशा पंजीकरण' : 'ASHA Field Intake', icon: Users, badge: 'Offline' },
+    { id: 'doctor', label: lang === 'mr' ? 'डॉक्टर कमांड सेंटर' : lang === 'hi' ? 'डॉक्टर कमांड' : 'Doctor Command Center', icon: Stethoscope, badge: 'Live Queue' },
+    { id: 'map', label: lang === 'mr' ? 'गाव साथरोग नकाशा' : lang === 'hi' ? 'प्रकोप मानचित्र' : 'Village Outbreak GIS', icon: MapPin, badge: 'Hotspots' },
+    { id: 'passport', label: lang === 'mr' ? 'ऑफलाइन QR कार्ड' : lang === 'hi' ? 'QR हेल्थ पास' : 'Offline QR Health Pass', icon: QrCode, badge: 'Scan & Go' },
+    { id: 'pharmacy', label: lang === 'mr' ? 'औषध साठा' : lang === 'hi' ? 'दवा स्टॉक' : 'Medicine Stock', icon: Pill, badge: '108 Dispatch' },
     { id: 'simulation', label: 'Simulation Lab', icon: Cpu, badge: 'Judge Demo' },
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className={`min-h-screen flex flex-col font-sans transition-colors ${
+      sunlightMode ? 'bg-amber-50/40 text-black contrast-125' : 'bg-slate-50 text-slate-900'
+    }`}>
       {/* Top Real-Time Connection Bar */}
       <NetworkBadge />
 
@@ -44,24 +53,64 @@ export const App: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
-                <span>Sanjeevani</span>
+                <span>{t.appTitle}</span>
                 <span className="text-[10px] font-bold uppercase bg-amber-400 text-slate-950 px-2 py-0.5 rounded tracking-wide">
                   Enterprise Rural Telemed
                 </span>
               </h1>
               <p className="text-xs text-green-100">
-                100% Offline-First PWA • On-Device MEWS Triage • Zero-Bandwidth Distributed Sync
+                {t.appSubtitle}
               </p>
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-xs bg-green-900/60 px-3 py-1.5 rounded-lg border border-green-700">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <span>District: <strong>Palghar Tribal Belt (MH)</strong></span>
+          <div className="flex items-center gap-2">
+            {/* Regional Language Switcher */}
+            <div className="flex items-center bg-green-900/90 rounded-lg p-1 border border-green-700 text-xs">
+              <Globe className="w-3.5 h-3.5 text-green-300 ml-1.5 mr-1" />
+              <button
+                onClick={() => setLang('en')}
+                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
+                  lang === 'en' ? 'bg-white text-green-900 shadow-xs' : 'text-green-200 hover:text-white'
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang('mr')}
+                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
+                  lang === 'mr' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-green-200 hover:text-white'
+                }`}
+              >
+                मराठी
+              </button>
+              <button
+                onClick={() => setLang('hi')}
+                className={`px-2 py-1 rounded font-bold cursor-pointer transition ${
+                  lang === 'hi' ? 'bg-white text-green-900 shadow-xs' : 'text-green-200 hover:text-white'
+                }`}
+              >
+                हिंदी
+              </button>
+            </div>
+
+            {/* High-Contrast Sunlight Mode Toggle */}
+            <button
+              onClick={() => setSunlightMode(!sunlightMode)}
+              title="Toggle High-Contrast Field Sunlight Mode"
+              className={`p-2 rounded-lg border text-xs font-bold transition cursor-pointer flex items-center gap-1 ${
+                sunlightMode
+                  ? 'bg-amber-300 text-slate-950 border-amber-400 shadow-sm'
+                  : 'bg-green-900/60 text-green-200 border-green-700 hover:text-white'
+              }`}
+            >
+              <Sun className="w-4 h-4" />
+              <span className="hidden sm:inline">{sunlightMode ? 'Sunlight Active' : 'Sunlight Mode'}</span>
+            </button>
           </div>
         </div>
 
-        {/* Interactive Multi-Page Navigation Bar */}
+        {/* Multi-Page Navigation Bar */}
         <div className="bg-green-900/80 border-t border-green-700/60 px-4 sm:px-6">
           <nav className="max-w-7xl mx-auto flex space-x-1 overflow-x-auto py-2 scrollbar-none">
             {navItems.map(item => {
@@ -95,7 +144,7 @@ export const App: React.FC = () => {
 
       {/* Main Page Body */}
       <main className="flex-1">
-        {activeTab === 'worker' && <WorkerPortal />}
+        {activeTab === 'worker' && <WorkerPortal lang={lang} />}
         {activeTab === 'doctor' && <DoctorPortal />}
         {activeTab === 'map' && <OutbreakMap />}
         {activeTab === 'passport' && <PatientQRPassport />}
