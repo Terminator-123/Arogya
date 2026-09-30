@@ -37,8 +37,8 @@
 9. **Offline Ayushman ABHA QR Health Passport**
    - Generates and scans offline compressed QR health cards for instant patient identification in network dead zones.
 
-10. **108 Emergency Ambulance GPS Dispatch & Simulation Lab**
-    - Live transit telemetry, driver dispatch protocol for Code Red emergencies, and interactive network simulator (Online, 2G EDGE, 100% Offline).
+10. **108 Emergency Ambulance GPS Dispatch & Hotline**
+    - Live transit telemetry, driver dispatch protocol for Code Red emergencies, and quick-access 108 emergency response desk.
 
 ---
 

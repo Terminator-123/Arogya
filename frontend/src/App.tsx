@@ -7,7 +7,6 @@ import { DoctorPortal } from './components/DoctorPortal';
 import { OutbreakMap } from './components/OutbreakMap';
 import { PatientQRPassport } from './components/PatientQRPassport';
 import { MedicineInventory } from './components/MedicineInventory';
-import { SimulationLab } from './components/SimulationLab';
 import { DatabaseExplorer } from './components/DatabaseExplorer';
 import { TRANSLATIONS, type Language } from './utils/i18n';
 import { 
@@ -18,7 +17,6 @@ import {
   MapPin, 
   QrCode, 
   Pill, 
-  Cpu, 
   Database,
   Activity,
   Globe,
@@ -31,7 +29,7 @@ import {
   ShieldAlert
 } from 'lucide-react';
 
-type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'simulation' | 'database';
+type TabView = 'worker' | 'scanner' | 'chat' | 'doctor' | 'map' | 'passport' | 'pharmacy' | 'database';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabView>('worker');
@@ -78,7 +76,6 @@ export const App: React.FC = () => {
     { id: 'map', label: t.tabMap, icon: MapPin, badge: 'GIS' },
     { id: 'passport', label: t.tabPassport, icon: QrCode, badge: 'ABHA' },
     { id: 'pharmacy', label: t.tabPharmacy, icon: Pill, badge: 'Stock' },
-    { id: 'simulation', label: t.tabSimulation, icon: Cpu, badge: 'Merge' },
     { id: 'database', label: t.tabDatabase, icon: Database, badge: 'SQLite' },
   ];
 
@@ -296,7 +293,6 @@ export const App: React.FC = () => {
         {activeTab === 'map' && <OutbreakMap lang={lang} />}
         {activeTab === 'passport' && <PatientQRPassport lang={lang} />}
         {activeTab === 'pharmacy' && <MedicineInventory lang={lang} />}
-        {activeTab === 'simulation' && <SimulationLab lang={lang} />}
         {activeTab === 'database' && <DatabaseExplorer lang={lang} />}
       </main>
 
