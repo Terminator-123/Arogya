@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { TRANSLATIONS, type Language } from '../utils/i18n';
 import { playHospitalChime } from '../utils/audioAlert';
 import { API_BASE_URL } from '../config/api';
-import { Bot, User, Send, Sparkles, HelpCircle, ShieldAlert, RefreshCw } from 'lucide-react';
+import { Bot, User, Send, Sparkles, HelpCircle, ShieldAlert, RefreshCw, Mic, MicOff } from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -29,7 +29,52 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ lang = 'mr' }) => {
   ]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const voiceRecognitionRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const toggleVoiceInput = () => {
+    const win = window as any;
+    const SpeechRecognition = win.SpeechRecognition || win.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert(lang === 'mr' ? 'या ब्राउझरमध्ये व्हॉईस इनपुट उपलब्ध नाही. कृपया Chrome वापरा.' : 'Voice recognition is not supported on this browser. Please use Chrome.');
+      return;
+    }
+
+    if (isVoiceListening) {
+      try {
+        voiceRecognitionRef.current?.stop();
+      } catch {}
+      setIsVoiceListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = lang === 'mr' ? 'mr-IN' : lang === 'hi' ? 'hi-IN' : 'en-IN';
+      recognition.continuous = false;
+      recognition.interimResults = true;
+
+      recognition.onstart = () => setIsVoiceListening(true);
+      recognition.onresult = (event: any) => {
+        let transcript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript) {
+          setInputText(transcript);
+        }
+      };
+      recognition.onerror = () => setIsVoiceListening(false);
+      recognition.onend = () => setIsVoiceListening(false);
+
+      voiceRecognitionRef.current = recognition;
+      recognition.start();
+    } catch {
+      setIsVoiceListening(false);
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -217,6 +262,18 @@ export const AIChatbot: React.FC<AIChatbotProps> = ({ lang = 'mr' }) => {
               placeholder={t.chatPlaceholder}
               className="flex-1 border border-slate-300 rounded-lg px-3 py-2.5 text-xs outline-none focus:ring-2 focus:ring-slate-900 bg-slate-50 text-slate-900"
             />
+            <button
+              type="button"
+              onClick={toggleVoiceInput}
+              title={isVoiceListening ? 'Stop Listening' : 'Voice Input (Marathi / Hindi / English)'}
+              className={`p-2.5 rounded-lg border text-xs font-bold transition cursor-pointer flex items-center justify-center ${
+                isVoiceListening
+                  ? 'bg-red-600 text-white border-red-700 animate-pulse ring-2 ring-red-400'
+                  : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border-slate-300'
+              }`}
+            >
+              {isVoiceListening ? <MicOff className="w-4 h-4 text-white" /> : <Mic className="w-4 h-4 text-slate-700" />}
+            </button>
             <button
               type="submit"
               disabled={!inputText.trim()}
